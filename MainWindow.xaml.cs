@@ -6,6 +6,7 @@ using RunEnova.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -39,16 +40,17 @@ namespace RunEnova
 
         public void Load(string nazwa_bazy = null)
         {
-            Config = Config == null ? new Config() : Config;
-            Config.Baza = Config.Baza == null ? new Baza() { NazwaBazy = nazwa_bazy } : Config.Baza;
+            Config = Config ?? new Config();
+            Config.Baza = Config.Baza ?? new Baza() { NazwaBazy = nazwa_bazy };
         }
 
         private void LoadContext(string database_name)
         {
-            string connectionString = DbSetting.GetConnectionString(database_name);
+            //string connectionString = DbSetting.GetConnectionString(database_name);
+            string connectionString = ConfigurationManager.ConnectionStrings[database_name]?.ConnectionString;
             if (connectionString == null)
             {
-                MessageBox.Show("Nie znaleziono wpisu w appsettings.json dla podanej bazy");
+                MessageBox.Show("Nie znaleziono wpisu w App.config dla podanej bazy");
                 return;
             }
             Context = new BazaDb();
@@ -87,9 +89,9 @@ namespace RunEnova
                 return;
 
             if ((bool)SonetaServerRadioBtn?.IsChecked)
-                Config.Baza.ServerConfig.FolderServ = ((ComboBox)sender).SelectedItem?.ToString();
+                Config.Baza.FolderServ = ((ComboBox)sender).SelectedItem?.ToString();
             else
-                Config.Baza.ApplicationConfig.FolderApp = ((ComboBox)sender).SelectedItem?.ToString();
+                Config.Baza.FolderApp = ((ComboBox)sender).SelectedItem?.ToString();
         }
         private void SonetaExplorerRadioBtn_Checked_1(object sender, RoutedEventArgs e)
         {
@@ -98,7 +100,7 @@ namespace RunEnova
             DirectoryInfo di = new DirectoryInfo($"C:\\Program Files (x86)\\Soneta");
             WersjaComboBox.ItemsSource = di.GetDirectories().Select(x => x.Name).ToList();
             if (Config?.Baza != null)
-                WersjaComboBox.SelectedItem = Config.Baza.ApplicationConfig.FolderApp;
+                WersjaComboBox.SelectedItem = Config.Baza.FolderApp;
 
             PanelTxt.Text = PanelDlaSonetaExplorer(SonetaExplorerParam);
         }
@@ -128,7 +130,7 @@ namespace RunEnova
             DirectoryInfo dir = new DirectoryInfo($"C:\\Multi");
             WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
             if (Config?.Baza != null)
-                WersjaComboBox.SelectedItem = Config.Baza.ServerConfig.FolderServ;
+                WersjaComboBox.SelectedItem = Config.Baza.FolderServ;
 
             PanelTxt.Text = PanelDlaSonetaSerwer(SonetaServerParam);
         }
@@ -164,7 +166,7 @@ namespace RunEnova
             if (c != null)
                 Config.Baza = c;
             else
-                Config.Baza = new Baza();
+                Config.Baza = new Baza() { NazwaBazy = AktualnaBazaSQL };
 
             OdswiezUstawienia();
         }
@@ -175,11 +177,11 @@ namespace RunEnova
 
             if ((bool)SonetaExplorerRadioBtn?.IsChecked)
             {
-                WersjaComboBox.SelectedItem = Config.Baza.ApplicationConfig.FolderApp;
+                WersjaComboBox.SelectedItem = Config.Baza.FolderApp;
                 PanelTxt.Text = PanelDlaSonetaExplorer(SonetaExplorerParam);
             } else
             {
-                WersjaComboBox.SelectedItem = Config.Baza.ServerConfig.FolderServ;
+                WersjaComboBox.SelectedItem = Config.Baza.FolderServ;
                 PanelTxt.Text = PanelDlaSonetaSerwer(SonetaServerParam);
             }
         }
@@ -188,7 +190,9 @@ namespace RunEnova
         {
             List<string> lista = new List<string>();
 
-            string conString = DbSetting.GetConnectionString(AktualnaBazaSQL);
+            //string conString = DbSetting.GetConnectionString(AktualnaBazaSQL);
+            string conString = ConfigurationManager.ConnectionStrings[AktualnaBazaSQL]?.ConnectionString;
+
             using (SqlConnection con = new SqlConnection(conString))
             {
                 con.Open();
@@ -225,16 +229,23 @@ namespace RunEnova
                 bazy.Add(item.Element("Name").Value, item.Element("DatabaseName").Value);
             }
 
-            var filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "appsettings.json");
-            string json = File.ReadAllText(filePath);
-            JObject jsonObj = JsonConvert.DeserializeObject<JObject>(json);
-            JToken jtoken = jsonObj.Value<JToken>();
+            //var filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "appsettings.json");
+            //string json = File.ReadAllText(filePath);
+            //JObject jsonObj = JsonConvert.DeserializeObject<JObject>(json);
+            //JToken jtoken = jsonObj.Value<JToken>();
 
-            var t = jtoken.Children().Values();
+            //var t = jtoken.Children().Values();
 
-            foreach (var item in t.Values())
+            //foreach (var item in t.Values())
+            //{
+            //    nazwyBaz.Add(item.ToString().Split('"').ElementAt(1));
+            //}
+
+            ConnectionStringSettingsCollection connectionStrings = ConfigurationManager.ConnectionStrings;
+
+            foreach (ConnectionStringSettings conn in connectionStrings)
             {
-                nazwyBaz.Add(item.ToString().Split('"').ElementAt(1));
+                nazwyBaz.Add(conn.Name);
             }
 
             for (int i = 0; i < nazwyBaz.Count; i++)
@@ -271,7 +282,9 @@ namespace RunEnova
             }
                 
 
-            string conString = DbSetting.GetConnectionString(AktualnaBazaSQL);
+            //string conString = DbSetting.GetConnectionString(AktualnaBazaSQL);
+            string conString = ConfigurationManager.ConnectionStrings[AktualnaBazaSQL]?.ConnectionString;
+
             using (SqlConnection con = new SqlConnection(conString))
             {
                 con.Open();
@@ -351,7 +364,7 @@ namespace RunEnova
 
             Cursor = Cursors.Wait;
 
-            List<string> list = new List<string>();
+            //List<string> list = new List<string>();
             //ListaBaz = new List<string>();
 
             string conString;
@@ -361,7 +374,9 @@ namespace RunEnova
             {
                 conString = $"Server={sqlName};Trusted_Connection=True;";
 
+                List<string> list = new List<string>();
                 List<string> listaBazTemp = new List<string>();
+
                 using (SqlConnection con = new SqlConnection(conString))
                 {
                     con.Open();
@@ -394,8 +409,17 @@ namespace RunEnova
 
                     foreach (string baza in listaBazTemp)
                     {
-                        string connectionString = $"Server={sqlName};Database={baza};Trusted_Connection=True;";
-                        DbSetting.AddOrUpdateAppSetting($"ConnectionStrings:{baza}", connectionString);
+                        //string connectionString = $"Server={sqlName};Database={baza};Trusted_Connection=True;";
+                        //string providerName = "System.Data.SqlClient";
+                        //DbSetting.AddOrUpdateAppSetting($"ConnectionStrings:{baza}", connectionString);
+                        DbSetting.CreateConnectionString(sqlName, baza, null, null);
+
+                        ConfigurationManager.RefreshSection("connectionStrings");
+
+                        var conect = ConfigurationManager.ConnectionStrings;
+
+                        //ConnectionStringSettings connectionStringSettings = new ConnectionStringSettings(baza, connectionString, providerName);
+                        //ConfigurationManager.ConnectionStrings.Add(connectionStringSettings);
                     }
                     //ListaBaz.AddRange(listaBazTemp);
                 }

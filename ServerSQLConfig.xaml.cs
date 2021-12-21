@@ -6,6 +6,10 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.SqlServer.Management.Smo.Wmi;
 using System.Linq;
+using RunEnovaApplication.Extension;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Windows.Controls.Primitives;
 
 namespace RunEnova
 {
@@ -14,7 +18,7 @@ namespace RunEnova
     /// </summary>
     public partial class ServerSQLConfig : Window
     {
-        List<string> lista = new List<string>();
+        string WybranaBaza { get; set; }
         public ServerSQLConfig()
         {
             InitializeComponent();
@@ -32,16 +36,18 @@ namespace RunEnova
             this.Close();
         }
 
-        private const string defaultMsSqlInstanceName = "MSSQLSERVER";
+        //private const string defaultMsSqlInstanceName = "MSSQLSERVER";
 
         public static string[] GetLocalSqlServerInstances()
         {
-            return new ManagedComputer()
-                .ServerInstances
-                .Cast<ServerInstance>()
-                .Select(instance => string.IsNullOrEmpty(instance.Name) || instance.Name == defaultMsSqlInstanceName ?
-                    instance.Parent.Name : System.IO.Path.Combine(instance.Parent.Name, instance.Name))
-                .ToArray();
+            return SqlHelper.ListLocalSqlInstances().ToArray();
+            
+            //return new ManagedComputer()
+            //    .ServerInstances
+            //    .Cast<ServerInstance>()
+            //    .Select(instance => string.IsNullOrEmpty(instance.Name) || instance.Name == defaultMsSqlInstanceName ?
+            //        instance.Parent.Name : System.IO.Path.Combine(instance.Parent.Name, instance.Name))
+            //    .ToArray();
         }
 
         private void ListaSQLCmbBox_DropDownOpened(object sender, EventArgs e)
@@ -52,29 +58,68 @@ namespace RunEnova
         private void ListaSQLCmbBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //
-            string str = DbSetting.GetConnectionString("BazyEnova");
+            //string str = DbSetting.GetConnectionString("BazyEnova");
+
+            string str = ConfigurationManager.ConnectionStrings["BazyEnova"]?.ConnectionString;
+
             if (str == null)
             {
                 BazaChkBox.IsEnabled = true;
+                BazaChkBox.IsChecked = false;
                 MessageBox.Show($"Oznacz serwer na którym zostanie utworzona baza danych 'BazyEnova'.");
                 return;
+            } else
+            {
+                string[] serwer = str.Split(';');
+                BazaChkBox.IsChecked = serwer[0] == $"Data Source={ListaSQLCmbBox.SelectedItem}";
+
+                if (CheckIfDatabaseExist("BazyEnova", str))
+                {
+                    BazaChkBox.IsChecked = true;
+                    BazaChkBox.IsEnabled = false;
+                }
+                else
+                {
+                    BazaChkBox.IsEnabled = true;
+                    BazaChkBox.IsChecked = false;
+                }
             }
-
-            string[] provider = str.Split(';');
-
-            BazaChkBox.IsChecked = provider[0] == $"Server={ListaSQLCmbBox.SelectedItem}";
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            if (BazaChkBox.IsEnabled)
-                BazaChkBox.IsEnabled = false;
-            else
-                return;
+            //if (BazaChkBox.IsEnabled)
+            //    BazaChkBox.IsEnabled = false;
+            //else
+            //    return;
 
-            string selected = (string)ListaSQLCmbBox.SelectedItem;
-            string connectionString = $"Server={selected};Database=Baza;Trusted_Connection=True;";
-            DbSetting.AddOrUpdateAppSetting($"ConnectionStrings:BazyEnova", connectionString);
+            WybranaBaza = (string)ListaSQLCmbBox.SelectedItem;
+
+            if (!string.IsNullOrEmpty(WybranaBaza))
+            {
+                DbSetting.CreateConnectionString(WybranaBaza, "BazyEnova", null, null);
+            }
+
+            //string connectionString = $"Server={selected};Database=BazyEnova;Trusted_Connection=True;";
+
+            //DbSetting.AddOrUpdateAppSetting($"ConnectionStrings:BazyEnova", connectionString);
+        }
+
+        public bool CheckIfDatabaseExist(string databaseName, string connString)
+        {
+            var cmdText = "select count(*) from master.dbo.sysdatabases where name=@database";
+
+            using (var sqlConnection = new SqlConnection(connString))
+            {
+                using (var sqlCmd = new SqlCommand(cmdText, sqlConnection))
+                {
+                    sqlCmd.Parameters.Add("@database", SqlDbType.NVarChar).Value = databaseName;
+
+                    sqlConnection.Open();
+
+                    return Convert.ToInt32(sqlCmd.ExecuteScalar()) > 0;
+                }
+            }
         }
 
         private void WinAutenticationChkBox_Checked(object sender, RoutedEventArgs e)

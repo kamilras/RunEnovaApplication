@@ -8,9 +8,9 @@ namespace RunEnova.Model
 {
     public class BazaDb : DbContext
     {
-        public BazaDb() : base()
+        public BazaDb() : base("name=BazyEnova")
         {
-            //base.Database.EnsureCreated();
+            base.Database.CreateIfNotExists();
         }
         //public BazaDb(DbContextOptions<BazaDb> options) : base(options)
         //{

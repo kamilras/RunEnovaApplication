@@ -39,18 +39,18 @@ namespace RunEnova
 
         private void WprowadzUstawienia()
         {
-            AplikacjaDLLFolderTxt.Text = MainWindow.Config.Baza.ApplicationConfig.FolderDodatkowApp;
-            ListaBazDanychAplikacjaTxt.Text = MainWindow.Config.Baza.ApplicationConfig.ListaBazDanychApp;
-            KonfiguracjaAplikacjaTxt.Text = MainWindow.Config.Baza.ApplicationConfig.KonfiguracjaApp;
-            FolderUIAplikacjaTxt.Text = MainWindow.Config.Baza.ApplicationConfig.FolderUIApp;
-            ListaBazDanychSerwerTxt.Text = MainWindow.Config.Baza.ServerConfig.ListaBazDanychServ;
-            SerwerDLLFolderTxt.Text = MainWindow.Config.Baza.ServerConfig.FolderDodatkowServ;
-            BezHarmonogramuChkBox.IsChecked = MainWindow.Config.Baza.ServerConfig.BezHarmonogramuServ;
-            BezDodatkowAppChkBox.IsChecked = MainWindow.Config.Baza.ApplicationConfig.BezDodatkowApp;
-            BezDodatkowSerwChkBox.IsChecked = MainWindow.Config.Baza.ServerConfig.BezDodatkowServ;
-            BezDLLSerweraAppChkBox.IsChecked = MainWindow.Config.Baza.ApplicationConfig.BezDLLSerweraApp;
-            BezDLLSerweraSerwChkBox.IsChecked = MainWindow.Config.Baza.ServerConfig.BezDLLSerweraServ;
-            PortTxt.Text = MainWindow.Config.Baza.ServerConfig.PortServ;
+            AplikacjaDLLFolderTxt.Text = MainWindow.Config.Baza.FolderDodatkowApp;
+            ListaBazDanychAplikacjaTxt.Text = MainWindow.Config.Baza.ListaBazDanychApp;
+            KonfiguracjaAplikacjaTxt.Text = MainWindow.Config.Baza.KonfiguracjaApp;
+            FolderUIAplikacjaTxt.Text = MainWindow.Config.Baza.FolderUIApp;
+            ListaBazDanychSerwerTxt.Text = MainWindow.Config.Baza.ListaBazDanychServ;
+            SerwerDLLFolderTxt.Text = MainWindow.Config.Baza.FolderDodatkowServ;
+            BezHarmonogramuChkBox.IsChecked = MainWindow.Config.Baza.BezHarmonogramuServ;
+            BezDodatkowAppChkBox.IsChecked = MainWindow.Config.Baza.BezDodatkowApp;
+            BezDodatkowSerwChkBox.IsChecked = MainWindow.Config.Baza.BezDodatkowServ;
+            BezDLLSerweraAppChkBox.IsChecked = MainWindow.Config.Baza.BezDLLSerweraApp;
+            BezDLLSerweraSerwChkBox.IsChecked = MainWindow.Config.Baza.BezDLLSerweraServ;
+            PortTxt.Text = MainWindow.Config.Baza.PortServ;
             OperatorBtn.SelectedItem = MainWindow.Config.Baza.Operator;
         }
 
@@ -62,18 +62,18 @@ namespace RunEnova
 
         private void OKBtn_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.Config.Baza.ApplicationConfig.FolderDodatkowApp = AplikacjaDLLFolderTxt.Text;
-            MainWindow.Config.Baza.ApplicationConfig.ListaBazDanychApp = ListaBazDanychAplikacjaTxt.Text;
-            MainWindow.Config.Baza.ApplicationConfig.KonfiguracjaApp = KonfiguracjaAplikacjaTxt.Text;
-            MainWindow.Config.Baza.ApplicationConfig.FolderUIApp = FolderUIAplikacjaTxt.Text;
-            MainWindow.Config.Baza.ServerConfig.ListaBazDanychServ = ListaBazDanychSerwerTxt.Text;
-            MainWindow.Config.Baza.ServerConfig.FolderDodatkowServ = SerwerDLLFolderTxt.Text;
-            MainWindow.Config.Baza.ServerConfig.BezHarmonogramuServ = (bool)BezHarmonogramuChkBox.IsChecked;
-            MainWindow.Config.Baza.ApplicationConfig.BezDodatkowApp = (bool)BezDodatkowAppChkBox.IsChecked;
-            MainWindow.Config.Baza.ServerConfig.BezDodatkowServ = (bool)BezDodatkowSerwChkBox.IsChecked;
-            MainWindow.Config.Baza.ApplicationConfig.BezDLLSerweraApp = (bool)BezDLLSerweraAppChkBox.IsChecked;
-            MainWindow.Config.Baza.ServerConfig.BezDLLSerweraServ = (bool)BezDLLSerweraSerwChkBox.IsChecked;
-            MainWindow.Config.Baza.ServerConfig.PortServ = PortTxt.Text;
+            MainWindow.Config.Baza.FolderDodatkowApp = AplikacjaDLLFolderTxt.Text;
+            MainWindow.Config.Baza.ListaBazDanychApp = ListaBazDanychAplikacjaTxt.Text;
+            MainWindow.Config.Baza.KonfiguracjaApp = KonfiguracjaAplikacjaTxt.Text;
+            MainWindow.Config.Baza.FolderUIApp = FolderUIAplikacjaTxt.Text;
+            MainWindow.Config.Baza.ListaBazDanychServ = ListaBazDanychSerwerTxt.Text;
+            MainWindow.Config.Baza.FolderDodatkowServ = SerwerDLLFolderTxt.Text;
+            MainWindow.Config.Baza.BezHarmonogramuServ = (bool)BezHarmonogramuChkBox.IsChecked;
+            MainWindow.Config.Baza.BezDodatkowApp = (bool)BezDodatkowAppChkBox.IsChecked;
+            MainWindow.Config.Baza.BezDodatkowServ = (bool)BezDodatkowSerwChkBox.IsChecked;
+            MainWindow.Config.Baza.BezDLLSerweraApp = (bool)BezDLLSerweraAppChkBox.IsChecked;
+            MainWindow.Config.Baza.BezDLLSerweraServ = (bool)BezDLLSerweraSerwChkBox.IsChecked;
+            MainWindow.Config.Baza.PortServ = PortTxt.Text;
             MainWindow.Config.Baza.Operator = OperatorBtn.Text;
 
             string sonetaExplorerParam = "";
@@ -90,43 +90,43 @@ namespace RunEnova
             StringBuilder sonetaExplorerBuilder = new StringBuilder();
             StringBuilder sonetaServerBuilder = new StringBuilder();
 
-            if (!string.IsNullOrEmpty(baza.ApplicationConfig.FolderDodatkowApp))
-                sonetaExplorerBuilder.Append($"/extpath=\"{baza.ApplicationConfig.FolderDodatkowApp}\" ");
+            if (!string.IsNullOrEmpty(baza.FolderDodatkowApp))
+                sonetaExplorerBuilder.Append($"/extpath=\"{baza.FolderDodatkowApp}\" ");
 
-            if (!string.IsNullOrEmpty(baza.ApplicationConfig.ListaBazDanychApp))
-                sonetaExplorerBuilder.Append($"/dbconfig=\"{baza.ApplicationConfig.ListaBazDanychApp}\" ");
+            if (!string.IsNullOrEmpty(baza.ListaBazDanychApp))
+                sonetaExplorerBuilder.Append($"/dbconfig=\"{baza.ListaBazDanychApp}\" ");
 
-            if (!string.IsNullOrEmpty(baza.ApplicationConfig.KonfiguracjaApp))
-                sonetaExplorerBuilder.Append($"/config=\"{baza.ApplicationConfig.KonfiguracjaApp}\" ");
+            if (!string.IsNullOrEmpty(baza.KonfiguracjaApp))
+                sonetaExplorerBuilder.Append($"/config=\"{baza.KonfiguracjaApp}\" ");
 
-            if (!string.IsNullOrEmpty(baza.ApplicationConfig.FolderUIApp))
-                sonetaExplorerBuilder.Append($"/folder=\"{baza.ApplicationConfig.FolderUIApp}\" ");
+            if (!string.IsNullOrEmpty(baza.FolderUIApp))
+                sonetaExplorerBuilder.Append($"/folder=\"{baza.FolderUIApp}\" ");
 
-            if (!string.IsNullOrEmpty(baza.ServerConfig.ListaBazDanychServ))
-                sonetaServerBuilder.Append($"/dbconfig=\"{baza.ServerConfig.ListaBazDanychServ}\" ");
+            if (!string.IsNullOrEmpty(baza.ListaBazDanychServ))
+                sonetaServerBuilder.Append($"/dbconfig=\"{baza.ListaBazDanychServ}\" ");
 
-            if (!string.IsNullOrEmpty(baza.ServerConfig.FolderDodatkowServ))
-                sonetaServerBuilder.Append($"/extpath=\"{baza.ServerConfig.FolderDodatkowServ}\" ");
+            if (!string.IsNullOrEmpty(baza.FolderDodatkowServ))
+                sonetaServerBuilder.Append($"/extpath=\"{baza.FolderDodatkowServ}\" ");
 
-            if (!string.IsNullOrEmpty(baza.ServerConfig.PortServ))
-                sonetaServerBuilder.Append($"/port=\"{baza.ServerConfig.PortServ}\" ");
+            if (!string.IsNullOrEmpty(baza.PortServ))
+                sonetaServerBuilder.Append($"/port=\"{baza.PortServ}\" ");
 
             if (!string.IsNullOrEmpty(baza.Operator))
                 sonetaExplorerBuilder.Append($"/operator=\"{baza.Operator}\" ");
 
-            if (baza.ServerConfig.BezHarmonogramuServ)
+            if (baza.BezHarmonogramuServ)
                 sonetaServerBuilder.Append($"/noscheduler "); 
             
-            if (baza.ApplicationConfig.BezDodatkowApp)
+            if (baza.BezDodatkowApp)
                 sonetaExplorerBuilder.Append($"/ext= ");
 
-            if (baza.ServerConfig.BezDodatkowServ)
+            if (baza.BezDodatkowServ)
                 sonetaServerBuilder.Append($"/ext= "); 
 
-            if (baza.ApplicationConfig.BezDLLSerweraApp)
+            if (baza.BezDLLSerweraApp)
                 sonetaExplorerBuilder.Append($"/nodbextensions "); 
 
-            if (baza.ServerConfig.BezDLLSerweraServ)
+            if (baza.BezDLLSerweraServ)
                 sonetaServerBuilder.Append($"/nodbextensions ");
 
             sonetaExplorerParam = sonetaExplorerBuilder.ToString();

@@ -1,6 +1,6 @@
-﻿using RunEnovaApplication.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace RunEnova.Model
@@ -10,7 +10,19 @@ namespace RunEnova.Model
         public int Id { get; set; }
         public string NazwaBazy { get; set; }
         public string Operator { get; set; }
-        public virtual ApplicationConfig ApplicationConfig { get; set; }
-        public virtual ServerConfig ServerConfig { get; set; }
+        public string FolderApp { get; set; }
+        public string FolderUIApp { get; set; }
+        public bool BezDLLSerweraApp { get; set; }
+        public bool BezDodatkowApp { get; set; }
+        public string ListaBazDanychApp { get; set; }
+        public string FolderDodatkowApp { get; set; }
+        public string KonfiguracjaApp { get; set; }
+        public string FolderServ { get; set; }
+        public bool BezHarmonogramuServ { get; set; }
+        public bool BezDLLSerweraServ { get; set; }
+        public bool BezDodatkowServ { get; set; }
+        public string PortServ { get; set; }
+        public string ListaBazDanychServ { get; set; }
+        public string FolderDodatkowServ { get; set; }
     }
 }
