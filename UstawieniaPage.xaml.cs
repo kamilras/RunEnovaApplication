@@ -22,5 +22,25 @@ namespace RunEnova
         {
             InitializeComponent();
         }
+
+        private void OperatorComBox_DropDownOpened(object sender, EventArgs e)
+        {
+            System.Windows.Forms.MessageBox.Show("Brak implementacji");
+        }
+
+        private void OperatorComBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ResetPassBtn_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.MessageBox.Show("Brak implementacji");
+        }
+
+        private void DemoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.MessageBox.Show("Brak implementacji");
+        }
     }
 }

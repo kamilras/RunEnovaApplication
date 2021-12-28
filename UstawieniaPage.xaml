@@ -9,9 +9,9 @@
       Title="UstawieniaPage">
 
     <Grid>
-        <ComboBox x:Name="OperatorBtn" HorizontalAlignment="Left" Margin="27,44,0,0" VerticalAlignment="Top" Width="231" Height="35" />
-        <Button Content="Zresetuj hasło" HorizontalAlignment="Left" Margin="277,44,0,0" VerticalAlignment="Top" Height="35" Width="163"/>
-        <Button Content="Ustaw licencję demo" HorizontalAlignment="Left" Margin="277,113,0,0" VerticalAlignment="Top" Height="35" Width="163"/>
+        <ComboBox x:Name="OperatorComBox" HorizontalAlignment="Left" Margin="27,44,0,0" VerticalAlignment="Top" Width="231" Height="35" DropDownOpened="OperatorComBox_DropDownOpened" SelectionChanged="OperatorComBox_SelectionChanged" />
+        <Button x:Name="ResetPassBtn" Content="Zresetuj hasło" HorizontalAlignment="Left" Margin="277,44,0,0" VerticalAlignment="Top" Height="35" Width="163" Click="ResetPassBtn_Click"/>
+        <Button x:Name="DemoBtn" Content="Ustaw licencję demo" HorizontalAlignment="Left" Margin="277,113,0,0" VerticalAlignment="Top" Height="35" Width="163" Click="DemoBtn_Click"/>
 
     </Grid>
 </Page>
