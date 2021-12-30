@@ -22,10 +22,10 @@
         <TextBox x:Name="KonfiguracjaAplikacjaTxt" HorizontalAlignment="Left" Margin="248,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="460"/>
         <Label Content="Folder z dodatkami dla aplikacji" HorizontalAlignment="Left" Margin="67,70,0,0" VerticalAlignment="Top" Width="177" ToolTip="extpath"/>
         <TextBox x:Name="AplikacjaDLLFolderTxt" HorizontalAlignment="Left" Margin="249,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="460"/>
-        <Label Content="Plik ze ścieżką do folderu" HorizontalAlignment="Left" Margin="66,152,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.29,-0.312" Width="177" Height="26" ToolTip="dbconfig"/>
+        <Label Content="Plik ze ścieżką do folderu UI" HorizontalAlignment="Left" Margin="66,152,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.29,-0.312" Width="177" Height="26" ToolTip="dbconfig"/>
         <TextBox x:Name="FolderUIAplikacjaTxt" HorizontalAlignment="Left" Margin="248,152,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="460"/>
         <Button x:Name="OKBtn" Content="OK" HorizontalAlignment="Left" Margin="407,355,0,0" VerticalAlignment="Top" Width="302" Height="34" Click="OKBtn_Click"/>
-        <Button x:Name="KopiujBazeBtn" Content="Kopiuj z bazy..." HorizontalAlignment="Left" Margin="72,355,0,0" VerticalAlignment="Top" Height="34" Width="274" />
+        <Button x:Name="KopiujBazeBtn" Content="Kopiuj z bazy..." HorizontalAlignment="Left" Margin="72,355,0,0" VerticalAlignment="Top" Height="34" Width="274" Click="KopiujBazeBtn_Click" />
         <Separator HorizontalAlignment="Left" Margin="86,36,0,0" VerticalAlignment="Top" Height="10" Width="606"/>
         <Separator HorizontalAlignment="Left" Margin="86,203,0,0" VerticalAlignment="Top" Height="10" Width="606"/>
         <Label Content="Aplikacja:" HorizontalAlignment="Left" Margin="46,41,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.121,-1.065" Width="203" Height="29" Foreground="Black" Background="#FF61D400" FontSize="14"/>

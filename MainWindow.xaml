@@ -19,10 +19,10 @@
         <Button x:Name="InfoBtn" Content="Info" HorizontalAlignment="Left" Margin="398,68,0,0" VerticalAlignment="Top" Width="65" Click="InfoBtn_Click" Height="29" Background="#FFF7F0A6" Grid.ColumnSpan="2"/>
         <Button x:Name="ConfigBtn" Content="Konfiguracja" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.218,-0.969" Width="126" Height="47" Click="ConfigBtn_Click" />
         <Button x:Name="SerwerSQLBtn" Content="Serwer SQL" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Width="126" Click="SerwerSQLBtn_Click" Height="47" RenderTransformOrigin="0.425,-0.224"/>
-        <TextBox x:Name="PanelTxt" HorizontalAlignment="Left" Margin="159,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="304" Height="111" Grid.ColumnSpan="2" Background="#FFD7F1E2"/>
+        <TextBox x:Name="PanelTxt" HorizontalAlignment="Left" Margin="159,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="304" Height="111" Grid.ColumnSpan="2" Background="#FFD7F1E2" TextChanged="PanelTxt_TextChanged"/>
         <Button x:Name="PobierzBazyBtn" Content="Pobierz bazy" HorizontalAlignment="Left" Margin="234.8,43,0,0" VerticalAlignment="Top" Height="21" Width="90" Grid.Column="1" Background="#FFDAA951" Click="PobierzBazyBtn_Click"/>
         <RadioButton x:Name="SonetaServerRadioBtn" Content="SonetaServer" HorizontalAlignment="Left" Margin="185,91,0,0" VerticalAlignment="Top" Checked="SonetaServerRadioBtn_Checked" Width="102" Height="16"/>
         <RadioButton x:Name="SonetaExplorerRadioBtn" Content="SonetaExplorer" HorizontalAlignment="Left" Margin="185,68,0,0" VerticalAlignment="Top" Checked="SonetaExplorerRadioBtn_Checked_1" IsChecked="True" Width="115" Height="16"/>
-        <Image HorizontalAlignment="Left" Height="53" Margin="10,0,0,0" VerticalAlignment="Top" Width="81" Source="OPENOVZLCRM365-1.jpg" Stretch="Fill"/>
+        <Image HorizontalAlignment="Left" Height="68" Margin="10,0,0,0" VerticalAlignment="Top" Width="126" Source="OPENOVZLCRM365-1.jpg" Stretch="Fill"/>
     </Grid>
 </Window>

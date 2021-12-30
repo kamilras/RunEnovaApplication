@@ -17,6 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RunEnova
 {
@@ -27,12 +28,15 @@ namespace RunEnova
     {
         private BazaDb Context { get; set; }
         public static Config Config { get; set; }
+        public Baza Baza { get; set; }
         public Dictionary<string, string> ListaBazSQL { get; set; }
         public Dictionary<string, string> ListaBazEnova { get; set; }
         public static string AktualnaBazaEnova { get; set; }
         public static string AktualnaBazaSQL { get; set; }
         public string SonetaExplorerParam = "";
         public string SonetaServerParam = "";
+        private bool ConfigChanged { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -63,7 +67,8 @@ namespace RunEnova
             if ((bool)SonetaExplorerRadioBtn?.IsChecked)
             {
                 startInfo.FileName = $"C:\\Program Files (x86)\\Soneta\\{WersjaComboBox.Text}\\SonetaExplorer.exe";
-            } else
+            }
+            else
             {
                 startInfo.FileName = $"C:\\Multi\\{WersjaComboBox.Text}\\SonetaServer.exe";
             }
@@ -146,7 +151,7 @@ namespace RunEnova
             if (Context.Baza.FirstOrDefault(x => x.Id == Config.Baza.Id) == null)
                 Context.Baza.Add(Config.Baza);
             //else
-                //Context.Baza.Update(Config.Baza);
+            //Context.Baza.Update(Config.Baza);
             Context.SaveChanges();
 
             MessageBox.Show("Zapisano ustawienia!");
@@ -179,7 +184,8 @@ namespace RunEnova
             {
                 WersjaComboBox.SelectedItem = Config.Baza.FolderApp;
                 PanelTxt.Text = PanelDlaSonetaExplorer(SonetaExplorerParam);
-            } else
+            }
+            else
             {
                 WersjaComboBox.SelectedItem = Config.Baza.FolderServ;
                 PanelTxt.Text = PanelDlaSonetaSerwer(SonetaServerParam);
@@ -201,7 +207,7 @@ namespace RunEnova
                     using (IDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
-{
+                        {
                             lista.Add(dr[0].ToString());
                         }
                     }
@@ -280,7 +286,7 @@ namespace RunEnova
                 MessageBox.Show("Proszę wybrać bazę danych");
                 return;
             }
-                
+
 
             //string conString = DbSetting.GetConnectionString(AktualnaBazaSQL);
             string conString = ConfigurationManager.ConnectionStrings[AktualnaBazaSQL]?.ConnectionString;
@@ -345,10 +351,13 @@ namespace RunEnova
             SonetaExplorerParam = e.SonetaExplorerParam;
             SonetaServerParam = e.SonetaServerParam;
 
+            ConfigChanged = true;
+
             if ((bool)SonetaExplorerRadioBtn.IsChecked)
             {
                 PanelTxt.Text = PanelDlaSonetaExplorer(e.SonetaExplorerParam);
-            } else
+            }
+            else
             {
                 PanelTxt.Text = PanelDlaSonetaSerwer(e.SonetaServerParam);
             }
@@ -409,23 +418,169 @@ namespace RunEnova
 
                     foreach (string baza in listaBazTemp)
                     {
-                        //string connectionString = $"Server={sqlName};Database={baza};Trusted_Connection=True;";
-                        //string providerName = "System.Data.SqlClient";
-                        //DbSetting.AddOrUpdateAppSetting($"ConnectionStrings:{baza}", connectionString);
                         DbSetting.CreateConnectionString(sqlName, baza, null, null);
 
                         ConfigurationManager.RefreshSection("connectionStrings");
 
                         var conect = ConfigurationManager.ConnectionStrings;
-
-                        //ConnectionStringSettings connectionStringSettings = new ConnectionStringSettings(baza, connectionString, providerName);
-                        //ConfigurationManager.ConnectionStrings.Add(connectionStringSettings);
                     }
-                    //ListaBaz.AddRange(listaBazTemp);
                 }
             }
 
             Cursor = Cursors.Arrow;
+        }
+
+        private void PanelTxt_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ConfigChanged)
+            {
+                ConfigChanged = false;
+                return;
+            }
+
+            if (Config?.Baza == null)
+            {
+                PanelTxt.Text = string.Empty;
+                System.Windows.Forms.MessageBox.Show("Proszę wybrać bazę enovy");
+                return;
+            }
+
+            TextBox textBox = (TextBox)sender;
+
+            string[] parametry = textBox.Text.Split(new string[] { " /" }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (parametry.Length == 0)
+                return;
+
+            parametry[0] = parametry[0].Contains('/') ? parametry[0].Remove(0, 1) : parametry[0];
+
+            bool znaleziono_FolderDodatkowApp = false;
+            bool znaleziono_ListaBazDanychApp = false;
+            bool znaleziono_KonfiguracjaApp = false;
+            bool znaleziono_FolderUIApp = false;
+            bool znaleziono_Operator = false;
+            bool znaleziono_BezDodatkowApp = false;
+            bool znaleziono_BezDLLSerweraApp = false;
+            bool znaleziono_ListaBazDanychServ = false;
+            bool znaleziono_FolderDodatkowServ = false;
+            bool znaleziono_PortServ = false;
+            bool znaleziono_BezHarmonogramuServ = false;
+            bool znaleziono_BezDodatkowServ = false;
+            bool znaleziono_BezDLLSerweraServ = false;
+
+            for (int i = 0; i < parametry.Length; i++)
+            {
+                string parametr = parametry[i].Trim(new char[] { ' ', '"' });
+                if ((bool)SonetaExplorerRadioBtn.IsChecked)
+                {
+                    if (parametry[i].Contains("extpath=") && !znaleziono_FolderDodatkowApp)
+                    {
+                        znaleziono_FolderDodatkowApp = true;
+                        Config.Baza.FolderDodatkowApp = parametr.Replace("extpath=", "").Trim('"');
+                    }
+                    else if (!znaleziono_FolderDodatkowApp)
+                        Config.Baza.FolderDodatkowApp = "";
+
+                    if (parametry[i].Contains("dbconfig=") && !znaleziono_ListaBazDanychApp)
+                    {
+                        znaleziono_ListaBazDanychApp = true;
+                        Config.Baza.ListaBazDanychApp = parametr.Replace("dbconfig=", "").Trim('"');
+                        continue;
+                    }
+                    else if (!znaleziono_ListaBazDanychApp)
+                        Config.Baza.ListaBazDanychApp = "";
+
+                    if (parametry[i].Contains("config=") && !znaleziono_KonfiguracjaApp)
+                    {
+                        znaleziono_KonfiguracjaApp = true;
+                        Config.Baza.KonfiguracjaApp = parametr.Replace("config=", "").Trim('"');
+                    }
+                    else if (!znaleziono_KonfiguracjaApp)
+                        Config.Baza.KonfiguracjaApp = "";
+
+                    if (parametry[i].Contains("folder=") && !znaleziono_FolderUIApp)
+                    {
+                        znaleziono_FolderUIApp = true;
+                        Config.Baza.FolderUIApp = parametr.Replace("folder=", "").Trim('"');
+                    }
+                    else if (!znaleziono_FolderUIApp)
+                        Config.Baza.FolderUIApp = "";
+
+                    if (parametry[i].Contains("operator=") && !znaleziono_Operator)
+                    {
+                        znaleziono_Operator = true;
+                        Config.Baza.Operator = parametr.Replace("operator=", "").Trim('"');
+                    }
+                    else if (!znaleziono_Operator)
+                        Config.Baza.Operator = "";
+
+                    if (parametry[i].Contains("ext=") && !znaleziono_BezDodatkowApp)
+                    {
+                        znaleziono_BezDodatkowApp = true;
+                        Config.Baza.BezDodatkowApp = true;
+                    }
+                    else if (!znaleziono_BezDodatkowApp)
+                        Config.Baza.BezDodatkowApp = false;
+
+                    if (parametry[i].Contains("nodbextensions") && !znaleziono_BezDLLSerweraApp)
+                    {
+                        znaleziono_BezDLLSerweraApp = true;
+                        Config.Baza.BezDLLSerweraApp = true;
+                    }
+                    else if (!znaleziono_BezDLLSerweraApp)
+                        Config.Baza.BezDLLSerweraApp = false;
+                }
+                else
+                {
+                    if (znaleziono_ListaBazDanychServ)
+                    {
+                        znaleziono_ListaBazDanychServ = true;
+                        Config.Baza.ListaBazDanychServ = parametr.Replace("dbconfig=", "").Trim('"');
+                    }
+                    else if (!znaleziono_ListaBazDanychServ)
+                        Config.Baza.ListaBazDanychServ = "";
+
+                    if (znaleziono_FolderDodatkowServ)
+                    {
+                        znaleziono_FolderDodatkowServ = true;
+                        Config.Baza.FolderDodatkowServ = parametr.Replace("extpath=", "").Trim('"');
+                    }
+                    else if (znaleziono_FolderDodatkowServ)
+                        Config.Baza.FolderDodatkowServ = "";
+
+                    if (znaleziono_PortServ)
+                    {
+                        znaleziono_PortServ = true;
+                        Config.Baza.PortServ = parametr.Replace("port=", "").Trim('"');
+                    }
+                    else if (!znaleziono_PortServ)
+                        Config.Baza.PortServ = "";
+
+                    if (znaleziono_BezHarmonogramuServ)
+                    {
+                        znaleziono_BezHarmonogramuServ = true;
+                        Config.Baza.BezHarmonogramuServ = true;
+                    }
+                    else if (!znaleziono_BezHarmonogramuServ)
+                        Config.Baza.BezHarmonogramuServ = false;
+
+                    if (znaleziono_BezDodatkowServ)
+                    {
+                        znaleziono_BezDodatkowServ = true;
+                        Config.Baza.BezDodatkowServ = true;
+                    }
+                    else if (!znaleziono_BezDodatkowServ)
+                        Config.Baza.BezDodatkowServ = false;
+
+                    if (znaleziono_BezDLLSerweraServ)
+                    {
+                        znaleziono_BezDLLSerweraServ = true;
+                        Config.Baza.BezDLLSerweraServ = true;
+                    }
+                    else if (!znaleziono_BezDLLSerweraServ)
+                        Config.Baza.BezDLLSerweraServ = false;
+                }
+            }
         }
     }
 }

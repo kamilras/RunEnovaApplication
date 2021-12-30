@@ -1,19 +1,13 @@
 ﻿using Microsoft.Data.SqlClient;
 using RunEnova.Extension;
 using RunEnova.Model;
+using RunEnovaApplication;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace RunEnova
 {
@@ -39,19 +33,21 @@ namespace RunEnova
 
         private void WprowadzUstawienia()
         {
-            AplikacjaDLLFolderTxt.Text = MainWindow.Config.Baza.FolderDodatkowApp;
-            ListaBazDanychAplikacjaTxt.Text = MainWindow.Config.Baza.ListaBazDanychApp;
-            KonfiguracjaAplikacjaTxt.Text = MainWindow.Config.Baza.KonfiguracjaApp;
-            FolderUIAplikacjaTxt.Text = MainWindow.Config.Baza.FolderUIApp;
-            ListaBazDanychSerwerTxt.Text = MainWindow.Config.Baza.ListaBazDanychServ;
-            SerwerDLLFolderTxt.Text = MainWindow.Config.Baza.FolderDodatkowServ;
-            BezHarmonogramuChkBox.IsChecked = MainWindow.Config.Baza.BezHarmonogramuServ;
-            BezDodatkowAppChkBox.IsChecked = MainWindow.Config.Baza.BezDodatkowApp;
-            BezDodatkowSerwChkBox.IsChecked = MainWindow.Config.Baza.BezDodatkowServ;
-            BezDLLSerweraAppChkBox.IsChecked = MainWindow.Config.Baza.BezDLLSerweraApp;
-            BezDLLSerweraSerwChkBox.IsChecked = MainWindow.Config.Baza.BezDLLSerweraServ;
-            PortTxt.Text = MainWindow.Config.Baza.PortServ;
-            OperatorBtn.SelectedItem = MainWindow.Config.Baza.Operator;
+            OperatorBtn.ItemsSource = MainWindow.GetOperators();
+
+            AplikacjaDLLFolderTxt.Text = Baza.FolderDodatkowApp;
+            ListaBazDanychAplikacjaTxt.Text = Baza.ListaBazDanychApp;
+            KonfiguracjaAplikacjaTxt.Text = Baza.KonfiguracjaApp;
+            FolderUIAplikacjaTxt.Text = Baza.FolderUIApp;
+            ListaBazDanychSerwerTxt.Text = Baza.ListaBazDanychServ;
+            SerwerDLLFolderTxt.Text = Baza.FolderDodatkowServ;
+            BezHarmonogramuChkBox.IsChecked = Baza.BezHarmonogramuServ;
+            BezDodatkowAppChkBox.IsChecked = Baza.BezDodatkowApp;
+            BezDodatkowSerwChkBox.IsChecked = Baza.BezDodatkowServ;
+            BezDLLSerweraAppChkBox.IsChecked = Baza.BezDLLSerweraApp;
+            BezDLLSerweraSerwChkBox.IsChecked = Baza.BezDLLSerweraServ;
+            PortTxt.Text = Baza.PortServ;
+            OperatorBtn.SelectedItem = Baza.Operator;
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -115,22 +111,22 @@ namespace RunEnova
                 sonetaExplorerBuilder.Append($"/operator=\"{baza.Operator}\" ");
 
             if (baza.BezHarmonogramuServ)
-                sonetaServerBuilder.Append($"/noscheduler "); 
-            
+                sonetaServerBuilder.Append($"/noscheduler ");
+
             if (baza.BezDodatkowApp)
                 sonetaExplorerBuilder.Append($"/ext= ");
 
             if (baza.BezDodatkowServ)
-                sonetaServerBuilder.Append($"/ext= "); 
+                sonetaServerBuilder.Append($"/ext= ");
 
             if (baza.BezDLLSerweraApp)
-                sonetaExplorerBuilder.Append($"/nodbextensions "); 
+                sonetaExplorerBuilder.Append($"/nodbextensions ");
 
             if (baza.BezDLLSerweraServ)
                 sonetaServerBuilder.Append($"/nodbextensions ");
 
-            sonetaExplorerParam = sonetaExplorerBuilder.ToString();
-            sonetaServerParam = sonetaServerBuilder.ToString();
+            sonetaExplorerParam = sonetaExplorerBuilder.ToString().Trim(' ');
+            sonetaServerParam = sonetaServerBuilder.ToString().Trim(' ');
         }
 
         protected virtual void OnTextBoxValueChanged(TextBoxValueEventArgs e)
@@ -141,6 +137,19 @@ namespace RunEnova
         private void OperatorBtn_DropDownOpened(object sender, EventArgs e)
         {
             OperatorBtn.ItemsSource = MainWindow.GetOperators();
+        }
+
+        private void KopiujBazeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CopyDatabase copyDatabase = new CopyDatabase();
+            copyDatabase.KopiujBtnClicked += KopiujBtn_Click;
+            copyDatabase.Show();
+        }
+
+        private void KopiujBtn_Click(object sender, KopiujBtnValueEventArgs e)
+        {
+            Baza = e.WybranaBaza;
+            WprowadzUstawienia();
         }
     }
 

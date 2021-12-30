@@ -321,6 +321,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CopyDatabase.xaml.cs">
+      <DependentUpon>CopyDatabase.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extension\DbSetting.cs" />
     <Compile Include="Extension\SqlHelper.cs" />
     <Compile Include="Migrations\202112101027097_Initial.cs" />
@@ -342,6 +345,10 @@
     <Page Include="Config.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CopyDatabase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FeatureCodeWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
