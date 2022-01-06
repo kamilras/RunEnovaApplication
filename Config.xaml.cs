@@ -53,30 +53,30 @@ namespace RunEnova
         protected override void OnClosing(CancelEventArgs e)
         {
             e.Cancel = true;
-            this.Visibility = Visibility.Hidden;
+            Visibility = Visibility.Hidden;
         }
 
         private void OKBtn_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.Config.Baza.FolderDodatkowApp = AplikacjaDLLFolderTxt.Text;
-            MainWindow.Config.Baza.ListaBazDanychApp = ListaBazDanychAplikacjaTxt.Text;
-            MainWindow.Config.Baza.KonfiguracjaApp = KonfiguracjaAplikacjaTxt.Text;
-            MainWindow.Config.Baza.FolderUIApp = FolderUIAplikacjaTxt.Text;
-            MainWindow.Config.Baza.ListaBazDanychServ = ListaBazDanychSerwerTxt.Text;
-            MainWindow.Config.Baza.FolderDodatkowServ = SerwerDLLFolderTxt.Text;
-            MainWindow.Config.Baza.BezHarmonogramuServ = (bool)BezHarmonogramuChkBox.IsChecked;
-            MainWindow.Config.Baza.BezDodatkowApp = (bool)BezDodatkowAppChkBox.IsChecked;
-            MainWindow.Config.Baza.BezDodatkowServ = (bool)BezDodatkowSerwChkBox.IsChecked;
-            MainWindow.Config.Baza.BezDLLSerweraApp = (bool)BezDLLSerweraAppChkBox.IsChecked;
-            MainWindow.Config.Baza.BezDLLSerweraServ = (bool)BezDLLSerweraSerwChkBox.IsChecked;
-            MainWindow.Config.Baza.PortServ = PortTxt.Text;
-            MainWindow.Config.Baza.Operator = OperatorBtn.Text;
+            Baza.FolderDodatkowApp = AplikacjaDLLFolderTxt.Text;
+            Baza.ListaBazDanychApp = ListaBazDanychAplikacjaTxt.Text;
+            Baza.KonfiguracjaApp = KonfiguracjaAplikacjaTxt.Text;
+            Baza.FolderUIApp = FolderUIAplikacjaTxt.Text;
+            Baza.ListaBazDanychServ = ListaBazDanychSerwerTxt.Text;
+            Baza.FolderDodatkowServ = SerwerDLLFolderTxt.Text;
+            Baza.BezHarmonogramuServ = (bool)BezHarmonogramuChkBox.IsChecked;
+            Baza.BezDodatkowApp = (bool)BezDodatkowAppChkBox.IsChecked;
+            Baza.BezDodatkowServ = (bool)BezDodatkowSerwChkBox.IsChecked;
+            Baza.BezDLLSerweraApp = (bool)BezDLLSerweraAppChkBox.IsChecked;
+            Baza.BezDLLSerweraServ = (bool)BezDLLSerweraSerwChkBox.IsChecked;
+            Baza.PortServ = PortTxt.Text;
+            Baza.Operator = OperatorBtn.Text;
 
             string sonetaExplorerParam = "";
             string sonetaServerParam = "";
 
-            ShowOnPanel(MainWindow.Config.Baza, out sonetaExplorerParam, out sonetaServerParam);
-            OnTextBoxValueChanged(new TextBoxValueEventArgs(sonetaExplorerParam, sonetaServerParam));
+            ShowOnPanel(Baza, out sonetaExplorerParam, out sonetaServerParam);
+            OnTextBoxValueChanged(new TextBoxValueEventArgs(Baza, sonetaExplorerParam, sonetaServerParam));
 
             this.Close();
         }
@@ -148,7 +148,9 @@ namespace RunEnova
 
         private void KopiujBtn_Click(object sender, KopiujBtnValueEventArgs e)
         {
+            string baza = Baza.NazwaBazy;
             Baza = e.WybranaBaza;
+            Baza.NazwaBazy = baza;
             WprowadzUstawienia();
         }
     }
@@ -157,11 +159,13 @@ namespace RunEnova
     {
         public string SonetaExplorerParam { get; set; }
         public string SonetaServerParam { get; set; }
+        public Baza Baza { get; set; }
 
-        public TextBoxValueEventArgs(string sonetaExplorerParam, string sonetaServerParam)
+        public TextBoxValueEventArgs(Baza baza, string sonetaExplorerParam, string sonetaServerParam)
         {
             SonetaExplorerParam = sonetaExplorerParam;
             SonetaServerParam = sonetaServerParam;
+            Baza = baza;
         }
     }
 }

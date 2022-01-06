@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RunEnova"
         xmlns:Collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions" x:Class="RunEnova.Info"
         mc:Ignorable="d"
-        Title="Window1" Height="600" Width="600">
+        Title="Informacje" Height="600" Width="600">
     <Grid Margin="0,0,0,-6">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="299*"/>

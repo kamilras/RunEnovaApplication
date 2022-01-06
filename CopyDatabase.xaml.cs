@@ -64,7 +64,7 @@ namespace RunEnovaApplication
             extpathSerwLbl.Text = Baza.FolderDodatkowServ;
             dbconfigSerwLbl.Text = Baza.ListaBazDanychServ;
             portLbl.Text = Baza.PortServ;
-            nodbextensionsAppChBox.IsChecked = Baza.BezDLLSerweraServ;
+            nodbextensionsSerwChBox.IsChecked = Baza.BezDLLSerweraServ;
             extSerwChBox.IsChecked = Baza.BezDodatkowServ;
             noshedulerSerwChBox.IsChecked = Baza.BezHarmonogramuServ;
         }

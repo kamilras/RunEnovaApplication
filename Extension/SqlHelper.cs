@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,6 +65,120 @@ namespace RunEnovaApplication.Extension
                 }
                 return value;
             }
+        }
+
+        public static List<T> ReadAll<T>(SqlDataReader reader, Func<SqlDataReader, T> readFunc)
+        {
+            List<T> list = new List<T>();
+            while (reader.Read())
+            {
+                list.Add(readFunc(reader));
+            }
+            return list;
+        }
+
+        // Token: 0x0600000E RID: 14 RVA: 0x00002588 File Offset: 0x00000788
+        public static Tuple<string[], string[][]> ReadAll(SqlDataReader reader)
+        {
+            List<string[]> list = new List<string[]>();
+            string[] item = SqlHelper.ReadHeader(reader);
+            while (reader.Read())
+            {
+                string[] array = new string[reader.FieldCount];
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string[] array2 = array;
+                    int num = i;
+                    object value = reader.GetValue(i);
+                    array2[num] = ((value != null) ? value.ToString() : null);
+                }
+                list.Add(array);
+            }
+            return new Tuple<string[], string[][]>(item, list.ToArray());
+        }
+
+        public static List<T> ReadAll<T>(SqlConnection conn, string sql, Func<SqlDataReader, T> readFunc, params SqlParameter[] parameters)
+        {
+            List<T> result;
+            using (SqlCommand sqlCommand = new SqlCommand(sql, conn))
+            {
+                bool flag = parameters != null;
+                if (flag)
+                {
+                    foreach (SqlParameter value in parameters)
+                    {
+                        sqlCommand.Parameters.Add(value);
+                    }
+                }
+                using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                {
+                    result = SqlHelper.ReadAll<T>(sqlDataReader, readFunc);
+                }
+            }
+            return result;
+        }
+
+        public static T ReadSingle<T>(SqlConnection conn, string sql, Func<SqlDataReader, T> readFunc, T defaultValue = default(T), params SqlParameter[] parameters)
+        {
+            T result;
+            using (SqlCommand sqlCommand = new SqlCommand(sql, conn))
+            {
+                bool flag = parameters != null;
+                if (flag)
+                {
+                    foreach (SqlParameter value in parameters)
+                    {
+                        sqlCommand.Parameters.Add(value);
+                    }
+                }
+                using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                {
+                    result = SqlHelper.ReadSingle<T>(sqlDataReader, readFunc, defaultValue);
+                }
+            }
+            return result;
+        }
+
+        public static T ReadSingle<T>(SqlDataReader reader, Func<SqlDataReader, T> readFunc, T defaultValue = default(T))
+        {
+            T result;
+            if (!reader.Read())
+            {
+                result = defaultValue;
+            }
+            else
+            {
+                result = readFunc(reader);
+            }
+            return result;
+        }
+
+        public static string[] ReadHeader(SqlDataReader reader)
+        {
+            List<string> list = new List<string>();
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                list.Add(reader.GetName(i));
+            }
+            return list.ToArray();
+        }
+
+        public static int ExecuteNonQuery(SqlConnection conn, string sql, params SqlParameter[] parameters)
+        {
+            int result;
+            using (SqlCommand sqlCommand = new SqlCommand(sql, conn))
+            {
+                bool flag = parameters != null;
+                if (flag)
+                {
+                    foreach (SqlParameter value in parameters)
+                    {
+                        sqlCommand.Parameters.Add(value);
+                    }
+                }
+                result = sqlCommand.ExecuteNonQuery();
+            }
+            return result;
         }
     }
 }

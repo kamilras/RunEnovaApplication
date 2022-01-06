@@ -4,25 +4,49 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" x:Class="RunEnova.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="309.2" Width="810">
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="263" Width="766" Margin="24,0,13.2,16.2">
+        Title="Panel główny" Height="309.2" Width="810" Background="White">
+    <Window.Resources>
+        <Style x:Key="MyButton" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid VerticalAlignment="Center" Height="263" Width="766" Margin="24,0,13.2,16.2">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="197*"/>
             <ColumnDefinition Width="153*"/>
         </Grid.ColumnDefinitions>
+        <Image HorizontalAlignment="Left" Height="68" Margin="10,20,0,0" VerticalAlignment="Top" Width="126" Source="OPENOVZLCRM365-1.jpg" Stretch="Fill">
+            <Image.OpacityMask>
+                <ImageBrush ImageSource="OPENOVZLCRM365-1.jpg"/>
+            </Image.OpacityMask>
+        </Image>
         <Button x:Name="UruchomBtn" Content="Uruchom" HorizontalAlignment="Left" Margin="53.8,191,0,0" VerticalAlignment="Top" Height="47" Width="271" Click="Button_Click" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" BorderBrush="#FF089720" Background="#FF21EC17" Grid.Column="1"/>
         <Label Content="Wybierz wersję:" HorizontalAlignment="Left" Margin="53.8,111,0,0" VerticalAlignment="Top" Width="271" HorizontalContentAlignment="Left" FontWeight="Bold" FontSize="14" Height="30" Grid.Column="1"/>
-        <ComboBox x:Name="WersjaComboBox" HorizontalAlignment="Left" Margin="53.8,147,0,0" VerticalAlignment="Top" Width="271" SelectionChanged="WersjaComboBox_SelectionChanged" Height="29" Grid.Column="1"/>
+        <ComboBox x:Name="WersjaComboBox" HorizontalAlignment="Left" Margin="53.8,147,0,0" VerticalAlignment="Top" Width="271" SelectionChanged="WersjaComboBox_SelectionChanged" Height="29" Grid.Column="1" DropDownOpened="WersjaComboBox_DropDownOpened"/>
         <Label Content="Wybierz bazę :" HorizontalAlignment="Left" Margin="53.8,37,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.659,0.494" Width="151" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" FontSize="14" FontWeight="Bold" Grid.Column="1" Height="31"/>
         <Button x:Name="ZapiszBtn" Content="Zapisz dla tej bazy" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="126" Click="ZapiszBtn_Click" Height="47" Background="#FF98CBCB"/>
         <ComboBox x:Name="BazaComboBox" HorizontalAlignment="Left" Margin="53.8,69,0,0" VerticalAlignment="Top" Width="271" Height="29" SelectionChanged="ComboBox_SelectionChanged" DropDownOpened="BazaComboBox_DropDownOpened" Grid.Column="1"/>
         <Button x:Name="InfoBtn" Content="Info" HorizontalAlignment="Left" Margin="398,68,0,0" VerticalAlignment="Top" Width="65" Click="InfoBtn_Click" Height="29" Background="#FFF7F0A6" Grid.ColumnSpan="2"/>
         <Button x:Name="ConfigBtn" Content="Konfiguracja" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.218,-0.969" Width="126" Height="47" Click="ConfigBtn_Click" />
-        <Button x:Name="SerwerSQLBtn" Content="Serwer SQL" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Width="126" Click="SerwerSQLBtn_Click" Height="47" RenderTransformOrigin="0.425,-0.224"/>
-        <TextBox x:Name="PanelTxt" HorizontalAlignment="Left" Margin="159,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="304" Height="111" Grid.ColumnSpan="2" Background="#FFD7F1E2" TextChanged="PanelTxt_TextChanged"/>
+        <TextBox x:Name="PanelTxt" HorizontalAlignment="Left" Margin="159,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="304" Height="111" Grid.ColumnSpan="2" Background="#FFD7F1E2" LostFocus="PanelTxt_LostFocus" />
         <Button x:Name="PobierzBazyBtn" Content="Pobierz bazy" HorizontalAlignment="Left" Margin="234.8,43,0,0" VerticalAlignment="Top" Height="21" Width="90" Grid.Column="1" Background="#FFDAA951" Click="PobierzBazyBtn_Click"/>
         <RadioButton x:Name="SonetaServerRadioBtn" Content="SonetaServer" HorizontalAlignment="Left" Margin="185,91,0,0" VerticalAlignment="Top" Checked="SonetaServerRadioBtn_Checked" Width="102" Height="16"/>
         <RadioButton x:Name="SonetaExplorerRadioBtn" Content="SonetaExplorer" HorizontalAlignment="Left" Margin="185,68,0,0" VerticalAlignment="Top" Checked="SonetaExplorerRadioBtn_Checked_1" IsChecked="True" Width="115" Height="16"/>
-        <Image HorizontalAlignment="Left" Height="68" Margin="10,0,0,0" VerticalAlignment="Top" Width="126" Source="OPENOVZLCRM365-1.jpg" Stretch="Fill"/>
+        <Button x:Name="SerwerSQLBtn" Content="Ustawienia" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.218,-0.969" Width="126" Height="28" Click="SerwerSQLBtn_Click" />
     </Grid>
 </Window>

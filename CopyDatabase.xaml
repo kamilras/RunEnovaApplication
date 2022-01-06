@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RunEnovaApplication"
         mc:Ignorable="d"
-        Title="CopyDatabase" Height="715.654" Width="434.375">
+        Title="Kopiuj ustawienia bazy" Height="715.654" Width="434.375">
     <Grid Margin="0,0,2,0">
         <ComboBox x:Name="ListaBaz" HorizontalAlignment="Left" Margin="15,57,0,0" VerticalAlignment="Top" Width="327" DropDownOpened="ListaBaz_DropDownOpened" SelectionChanged="ListaBaz_SelectionChanged" />
         <Label Content="/extpath=" HorizontalAlignment="Left" Margin="15,142,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.442,0.362" Width="71"/>

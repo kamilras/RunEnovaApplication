@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RunEnova"
         mc:Ignorable="d"
-        Title="Configuration" Height="450" Width="750">
+        Title="Konfiguracja" Height="450" Width="750">
     <Grid>
         <Label Content="Plik z listą baz danych aplikacja" HorizontalAlignment="Left" Margin="66,99,0,0" VerticalAlignment="Top" Width="177" ToolTip="extpath"/>
         <Label Content="Plik z listą baz danych serwer" HorizontalAlignment="Left" Margin="66,246,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.29,-0.312" Width="178" Height="26" ToolTip="dbconfig"/>

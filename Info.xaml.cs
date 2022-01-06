@@ -18,10 +18,12 @@ namespace RunEnova
     /// </summary>
     public partial class Info : Window
     {
-        public Info(string baza, List<string> systemInfos, Dictionary<string, string> features)
+        public Info(string baza, List<string> systemInfos, Dictionary<string, string> features, string connString)
         {
             InitializeComponent();
             NazwaBazyTxt.Text = baza;
+
+            ConnString = connString;
 
             Features = features;
             SystemInfos = systemInfos;
@@ -30,6 +32,7 @@ namespace RunEnova
         }
         Dictionary<string, string> Features { get; set; }
         List<string> SystemInfos { get; set; }
+        public string ConnString { get; set; }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -43,7 +46,7 @@ namespace RunEnova
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            Main.Content = new UstawieniaPage();
+            Main.Content = new UstawieniaPage(ConnString);
         }
     }
 }

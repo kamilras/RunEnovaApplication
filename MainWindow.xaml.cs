@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RunEnova.Extension;
 using RunEnova.Model;
+using RunEnovaApplication.Extension;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace RunEnova
     public partial class MainWindow : Window
     {
         private BazaDb Context { get; set; }
-        public static Config Config { get; set; }
+        //public static Config Config { get; set; }
         public Baza Baza { get; set; }
         public Dictionary<string, string> ListaBazSQL { get; set; }
         public Dictionary<string, string> ListaBazEnova { get; set; }
@@ -35,18 +36,28 @@ namespace RunEnova
         public static string AktualnaBazaSQL { get; set; }
         public string SonetaExplorerParam = "";
         public string SonetaServerParam = "";
-        private bool ConfigChanged { get; set; }
+
+        public string SonetaExplorerCatalog { get; set; }
+        public string SonetaSerwerCatalog { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
+            LoadSettings();
         }
 
-        public void Load(string nazwa_bazy = null)
+        private void LoadSettings()
         {
-            Config = Config ?? new Config();
-            Config.Baza = Config.Baza ?? new Baza() { NazwaBazy = nazwa_bazy };
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            SonetaSerwerCatalog = config.AppSettings.Settings["SonetaSerwerPath"].Value;
+            SonetaExplorerCatalog = config.AppSettings.Settings["SonetaExplorerPath"].Value;
         }
+
+        //public void Load(string nazwa_bazy = null)
+        //{
+        //Config = Config ?? new Config();
+        //Config.Baza = Config.Baza ?? new Baza() { NazwaBazy = nazwa_bazy };
+        //}
 
         private void LoadContext(string database_name)
         {
@@ -66,11 +77,11 @@ namespace RunEnova
 
             if ((bool)SonetaExplorerRadioBtn?.IsChecked)
             {
-                startInfo.FileName = $"C:\\Program Files (x86)\\Soneta\\{WersjaComboBox.Text}\\SonetaExplorer.exe";
+                startInfo.FileName = $"{SonetaExplorerCatalog}\\{WersjaComboBox.Text}\\SonetaExplorer.exe";
             }
             else
             {
-                startInfo.FileName = $"C:\\Multi\\{WersjaComboBox.Text}\\SonetaServer.exe";
+                startInfo.FileName = $"{SonetaSerwerCatalog}\\{WersjaComboBox.Text}\\SonetaServer.exe";
             }
             startInfo.Arguments = PanelTxt.Text;
 
@@ -90,24 +101,31 @@ namespace RunEnova
 
         private void WersjaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (Baza == null)
+                return;
+
             if (((ComboBox)sender).SelectedItem == null)
                 return;
 
             if ((bool)SonetaServerRadioBtn?.IsChecked)
-                Config.Baza.FolderServ = ((ComboBox)sender).SelectedItem?.ToString();
+                Baza.FolderServ = ((ComboBox)sender).SelectedItem?.ToString();
             else
-                Config.Baza.FolderApp = ((ComboBox)sender).SelectedItem?.ToString();
+                Baza.FolderApp = ((ComboBox)sender).SelectedItem?.ToString();
         }
         private void SonetaExplorerRadioBtn_Checked_1(object sender, RoutedEventArgs e)
         {
             if (WersjaComboBox == null)
                 return;
-            DirectoryInfo di = new DirectoryInfo($"C:\\Program Files (x86)\\Soneta");
-            WersjaComboBox.ItemsSource = di.GetDirectories().Select(x => x.Name).ToList();
-            if (Config?.Baza != null)
-                WersjaComboBox.SelectedItem = Config.Baza.FolderApp;
 
-            PanelTxt.Text = PanelDlaSonetaExplorer(SonetaExplorerParam);
+            if (string.IsNullOrWhiteSpace(SonetaExplorerCatalog))
+                return;
+
+            DirectoryInfo di = new DirectoryInfo($"{SonetaExplorerCatalog}");
+            WersjaComboBox.ItemsSource = di.GetDirectories().Select(x => x.Name).ToList();
+            if (Baza != null)
+                WersjaComboBox.SelectedItem = Baza?.FolderApp;
+
+            OdswiezUstawienia();
         }
 
         private string PanelDlaSonetaExplorer(string sonetaExplorerParam)
@@ -115,8 +133,8 @@ namespace RunEnova
             if (string.IsNullOrEmpty(sonetaExplorerParam))
                 return string.Empty;
 
-            if (!string.IsNullOrEmpty(AktualnaBazaEnova))
-                return $"/database={AktualnaBazaEnova} {sonetaExplorerParam}";
+            if (!string.IsNullOrEmpty(Baza.NazwaBazy))
+                return $"/database={Baza.NazwaBazy} {sonetaExplorerParam}";
             return sonetaExplorerParam;
         }
 
@@ -125,19 +143,22 @@ namespace RunEnova
             if (string.IsNullOrEmpty(sonetaServerParam))
                 return string.Empty;
 
-            if (!string.IsNullOrEmpty(AktualnaBazaEnova))
-                return $"/console /database={AktualnaBazaEnova} {sonetaServerParam}";
+            if (!string.IsNullOrEmpty(Baza.NazwaBazy))
+                return $"/console /database={Baza.NazwaBazy} {sonetaServerParam}";
             return "/console " + sonetaServerParam;
         }
 
         private void SonetaServerRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            DirectoryInfo dir = new DirectoryInfo($"C:\\Multi");
-            WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
-            if (Config?.Baza != null)
-                WersjaComboBox.SelectedItem = Config.Baza.FolderServ;
+            if (string.IsNullOrWhiteSpace(SonetaSerwerCatalog))
+                return;
 
-            PanelTxt.Text = PanelDlaSonetaSerwer(SonetaServerParam);
+            DirectoryInfo dir = new DirectoryInfo($"{SonetaSerwerCatalog}");
+            WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
+            if (Baza != null)
+                WersjaComboBox.SelectedItem = Baza?.FolderServ;
+
+            OdswiezUstawienia();
         }
 
         private void ZapiszBtn_Click(object sender, RoutedEventArgs e)
@@ -148,8 +169,8 @@ namespace RunEnova
                 return;
             }
 
-            if (Context.Baza.FirstOrDefault(x => x.Id == Config.Baza.Id) == null)
-                Context.Baza.Add(Config.Baza);
+            if (Context.Baza.FirstOrDefault(x => x.Id == Baza.Id) == null)
+                Context.Baza.Add(Baza);
             //else
             //Context.Baza.Update(Config.Baza);
             Context.SaveChanges();
@@ -165,29 +186,32 @@ namespace RunEnova
                 AktualnaBazaEnova = ListaBazEnova[nazwa_bazy];
             AktualnaBazaSQL = ListaBazSQL[nazwa_bazy];
 
-            Load(AktualnaBazaSQL);
+            //Load(AktualnaBazaSQL);
             LoadContext("BazyEnova");
             Baza c = Context?.Baza?.FirstOrDefault(x => x.NazwaBazy == AktualnaBazaSQL);
             if (c != null)
-                Config.Baza = c;
+                Baza = c;
             else
-                Config.Baza = new Baza() { NazwaBazy = AktualnaBazaSQL };
+                Baza = new Baza() { NazwaBazy = AktualnaBazaSQL };
 
             OdswiezUstawienia();
         }
 
         private void OdswiezUstawienia()
         {
-            Config.ShowOnPanel(Config.Baza, out SonetaExplorerParam, out SonetaServerParam);
+            if (Baza == null)
+                return;
+
+            Config.ShowOnPanel(Baza, out SonetaExplorerParam, out SonetaServerParam);
 
             if ((bool)SonetaExplorerRadioBtn?.IsChecked)
             {
-                WersjaComboBox.SelectedItem = Config.Baza.FolderApp;
+                WersjaComboBox.SelectedItem = Baza.FolderApp;
                 PanelTxt.Text = PanelDlaSonetaExplorer(SonetaExplorerParam);
             }
             else
             {
-                WersjaComboBox.SelectedItem = Config.Baza.FolderServ;
+                WersjaComboBox.SelectedItem = Baza.FolderServ;
                 PanelTxt.Text = PanelDlaSonetaSerwer(SonetaServerParam);
             }
         }
@@ -322,7 +346,7 @@ namespace RunEnova
                 }
             }
 
-            Info info = new Info(AktualnaBazaSQL, sysInfoList, featureDict);
+            Info info = new Info(AktualnaBazaSQL, sysInfoList, featureDict, conString);
             //info.SizeToContent = SizeToContent.WidthAndHeight;
             info.Show();
         }
@@ -335,13 +359,13 @@ namespace RunEnova
 
         private void ConfigBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (Config == null)
+            if (Baza == null)
             {
                 MessageBox.Show("Nie wybrano bazy");
                 return;
             }
 
-            Config config = new Config(Config.Baza);
+            Config config = new Config(Baza);
             config.TextBoxValueChanged += ConfigWindowOnTextBoxValueChanged;
             config.Show();
         }
@@ -350,8 +374,7 @@ namespace RunEnova
         {
             SonetaExplorerParam = e.SonetaExplorerParam;
             SonetaServerParam = e.SonetaServerParam;
-
-            ConfigChanged = true;
+            Baza = e.Baza;
 
             if ((bool)SonetaExplorerRadioBtn.IsChecked)
             {
@@ -377,7 +400,7 @@ namespace RunEnova
             //ListaBaz = new List<string>();
 
             string conString;
-            string[] listaInstancjiSQL = ServerSQLConfig.GetLocalSqlServerInstances();
+            string[] listaInstancjiSQL = SqlHelper.ListLocalSqlInstances().ToArray();
 
             foreach (string sqlName in listaInstancjiSQL)
             {
@@ -430,24 +453,22 @@ namespace RunEnova
             Cursor = Cursors.Arrow;
         }
 
-        private void PanelTxt_TextChanged(object sender, TextChangedEventArgs e)
+        private void WprowadzZmianyZPanelu()
         {
-            if (ConfigChanged)
-            {
-                ConfigChanged = false;
-                return;
-            }
+            //if (ConfigChanged)
+            //{
+            //    ConfigChanged = false;
+            //    return;
+            //}
 
-            if (Config?.Baza == null)
+            if (Baza == null)
             {
                 PanelTxt.Text = string.Empty;
                 System.Windows.Forms.MessageBox.Show("Proszę wybrać bazę enovy");
                 return;
             }
 
-            TextBox textBox = (TextBox)sender;
-
-            string[] parametry = textBox.Text.Split(new string[] { " /" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] parametry = PanelTxt.Text.Split(new string[] { " /" }, StringSplitOptions.RemoveEmptyEntries);
 
             if (parametry.Length == 0)
                 return;
@@ -473,113 +494,132 @@ namespace RunEnova
                 string parametr = parametry[i].Trim(new char[] { ' ', '"' });
                 if ((bool)SonetaExplorerRadioBtn.IsChecked)
                 {
-                    if (parametry[i].Contains("extpath=") && !znaleziono_FolderDodatkowApp)
+                    if (parametr.Contains("extpath=") && !znaleziono_FolderDodatkowApp)
                     {
                         znaleziono_FolderDodatkowApp = true;
-                        Config.Baza.FolderDodatkowApp = parametr.Replace("extpath=", "").Trim('"');
+                        Baza.FolderDodatkowApp = parametr.Replace("extpath=", "").Trim('"');
                     }
                     else if (!znaleziono_FolderDodatkowApp)
-                        Config.Baza.FolderDodatkowApp = "";
+                        Baza.FolderDodatkowApp = "";
 
-                    if (parametry[i].Contains("dbconfig=") && !znaleziono_ListaBazDanychApp)
+                    if (parametr.Contains("dbconfig=") && !znaleziono_ListaBazDanychApp)
                     {
                         znaleziono_ListaBazDanychApp = true;
-                        Config.Baza.ListaBazDanychApp = parametr.Replace("dbconfig=", "").Trim('"');
+                        Baza.ListaBazDanychApp = parametr.Replace("dbconfig=", "").Trim('"');
                         continue;
                     }
                     else if (!znaleziono_ListaBazDanychApp)
-                        Config.Baza.ListaBazDanychApp = "";
+                        Baza.ListaBazDanychApp = "";
 
-                    if (parametry[i].Contains("config=") && !znaleziono_KonfiguracjaApp)
+                    if (parametr.Contains("config=") && !znaleziono_KonfiguracjaApp)
                     {
                         znaleziono_KonfiguracjaApp = true;
-                        Config.Baza.KonfiguracjaApp = parametr.Replace("config=", "").Trim('"');
+                        Baza.KonfiguracjaApp = parametr.Replace("config=", "").Trim('"');
                     }
                     else if (!znaleziono_KonfiguracjaApp)
-                        Config.Baza.KonfiguracjaApp = "";
+                        Baza.KonfiguracjaApp = "";
 
-                    if (parametry[i].Contains("folder=") && !znaleziono_FolderUIApp)
+                    if (parametr.Contains("folder=") && !znaleziono_FolderUIApp)
                     {
                         znaleziono_FolderUIApp = true;
-                        Config.Baza.FolderUIApp = parametr.Replace("folder=", "").Trim('"');
+                        Baza.FolderUIApp = parametr.Replace("folder=", "").Trim('"');
                     }
                     else if (!znaleziono_FolderUIApp)
-                        Config.Baza.FolderUIApp = "";
+                        Baza.FolderUIApp = "";
 
-                    if (parametry[i].Contains("operator=") && !znaleziono_Operator)
+                    if (parametr.Contains("operator=") && !znaleziono_Operator)
                     {
                         znaleziono_Operator = true;
-                        Config.Baza.Operator = parametr.Replace("operator=", "").Trim('"');
+                        Baza.Operator = parametr.Replace("operator=", "").Trim('"');
                     }
                     else if (!znaleziono_Operator)
-                        Config.Baza.Operator = "";
+                        Baza.Operator = "";
 
-                    if (parametry[i].Contains("ext=") && !znaleziono_BezDodatkowApp)
+                    if (parametr.Contains("ext=") && !znaleziono_BezDodatkowApp)
                     {
                         znaleziono_BezDodatkowApp = true;
-                        Config.Baza.BezDodatkowApp = true;
+                        Baza.BezDodatkowApp = true;
                     }
                     else if (!znaleziono_BezDodatkowApp)
-                        Config.Baza.BezDodatkowApp = false;
+                        Baza.BezDodatkowApp = false;
 
-                    if (parametry[i].Contains("nodbextensions") && !znaleziono_BezDLLSerweraApp)
+                    if (parametr.Contains("nodbextensions") && !znaleziono_BezDLLSerweraApp)
                     {
                         znaleziono_BezDLLSerweraApp = true;
-                        Config.Baza.BezDLLSerweraApp = true;
+                        Baza.BezDLLSerweraApp = true;
                     }
                     else if (!znaleziono_BezDLLSerweraApp)
-                        Config.Baza.BezDLLSerweraApp = false;
+                        Baza.BezDLLSerweraApp = false;
                 }
                 else
                 {
-                    if (znaleziono_ListaBazDanychServ)
+                    if (parametr.Contains("dbconfig=") && !znaleziono_ListaBazDanychServ)
                     {
                         znaleziono_ListaBazDanychServ = true;
-                        Config.Baza.ListaBazDanychServ = parametr.Replace("dbconfig=", "").Trim('"');
+                        Baza.ListaBazDanychServ = parametr.Replace("dbconfig=", "").Trim('"');
                     }
                     else if (!znaleziono_ListaBazDanychServ)
-                        Config.Baza.ListaBazDanychServ = "";
+                        Baza.ListaBazDanychServ = "";
 
-                    if (znaleziono_FolderDodatkowServ)
+                    if (parametr.Contains("extpath=") && !znaleziono_FolderDodatkowServ)
                     {
                         znaleziono_FolderDodatkowServ = true;
-                        Config.Baza.FolderDodatkowServ = parametr.Replace("extpath=", "").Trim('"');
+                        Baza.FolderDodatkowServ = parametr.Replace("extpath=", "").Trim('"');
                     }
-                    else if (znaleziono_FolderDodatkowServ)
-                        Config.Baza.FolderDodatkowServ = "";
+                    else if (!znaleziono_FolderDodatkowServ)
+                        Baza.FolderDodatkowServ = "";
 
-                    if (znaleziono_PortServ)
+                    if (parametr.Contains("port=") && !znaleziono_PortServ)
                     {
                         znaleziono_PortServ = true;
-                        Config.Baza.PortServ = parametr.Replace("port=", "").Trim('"');
+                        Baza.PortServ = parametr.Replace("port=", "").Trim('"');
                     }
                     else if (!znaleziono_PortServ)
-                        Config.Baza.PortServ = "";
+                        Baza.PortServ = "";
 
-                    if (znaleziono_BezHarmonogramuServ)
+                    if (parametr.Contains("noscheduler") && !znaleziono_BezHarmonogramuServ)
                     {
                         znaleziono_BezHarmonogramuServ = true;
-                        Config.Baza.BezHarmonogramuServ = true;
+                        Baza.BezHarmonogramuServ = true;
                     }
                     else if (!znaleziono_BezHarmonogramuServ)
-                        Config.Baza.BezHarmonogramuServ = false;
+                        Baza.BezHarmonogramuServ = false;
 
-                    if (znaleziono_BezDodatkowServ)
+                    if (parametr.Contains("ext=") && !znaleziono_BezDodatkowServ)
                     {
                         znaleziono_BezDodatkowServ = true;
-                        Config.Baza.BezDodatkowServ = true;
+                        Baza.BezDodatkowServ = true;
                     }
                     else if (!znaleziono_BezDodatkowServ)
-                        Config.Baza.BezDodatkowServ = false;
+                        Baza.BezDodatkowServ = false;
 
-                    if (znaleziono_BezDLLSerweraServ)
+                    if (parametr.Contains("nodbextensions") && !znaleziono_BezDLLSerweraServ)
                     {
                         znaleziono_BezDLLSerweraServ = true;
-                        Config.Baza.BezDLLSerweraServ = true;
+                        Baza.BezDLLSerweraServ = true;
                     }
                     else if (!znaleziono_BezDLLSerweraServ)
-                        Config.Baza.BezDLLSerweraServ = false;
+                        Baza.BezDLLSerweraServ = false;
                 }
+            }
+        }
+
+        private void PanelTxt_LostFocus(object sender, RoutedEventArgs e)
+        {
+            WprowadzZmianyZPanelu();
+        }
+
+        private void WersjaComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            if ((bool)SonetaExplorerRadioBtn.IsChecked)
+            {
+                DirectoryInfo dir = new DirectoryInfo($"{SonetaExplorerCatalog}");
+                WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
+            }
+            else
+            {
+                DirectoryInfo dir = new DirectoryInfo($"{SonetaSerwerCatalog}");
+                WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
             }
         }
     }

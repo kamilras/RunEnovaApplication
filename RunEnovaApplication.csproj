@@ -28,7 +28,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationRevision>7</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -324,7 +324,9 @@
     <Compile Include="CopyDatabase.xaml.cs">
       <DependentUpon>CopyDatabase.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extension\CoreTools.cs" />
     <Compile Include="Extension\DbSetting.cs" />
+    <Compile Include="Extension\OperatorExt.cs" />
     <Compile Include="Extension\SqlHelper.cs" />
     <Compile Include="Migrations\202112101027097_Initial.cs" />
     <Compile Include="Migrations\202112101027097_Initial.designer.cs">
@@ -448,6 +450,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="OPENOVZLCRM365-1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Settings-PNG-Picture.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
