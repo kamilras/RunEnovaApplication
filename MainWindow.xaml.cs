@@ -28,15 +28,11 @@ namespace RunEnova
     public partial class MainWindow : Window
     {
         private BazaDb Context { get; set; }
-        //public static Config Config { get; set; }
         public Baza Baza { get; set; }
         public Dictionary<string, string> ListaBazSQL { get; set; }
-        public Dictionary<string, string> ListaBazEnova { get; set; }
-        public static string AktualnaBazaEnova { get; set; }
         public static string AktualnaBazaSQL { get; set; }
         public string SonetaExplorerParam = "";
         public string SonetaServerParam = "";
-
         public string SonetaExplorerCatalog { get; set; }
         public string SonetaSerwerCatalog { get; set; }
 
@@ -51,21 +47,17 @@ namespace RunEnova
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             SonetaSerwerCatalog = config.AppSettings.Settings["SonetaSerwerPath"].Value;
             SonetaExplorerCatalog = config.AppSettings.Settings["SonetaExplorerPath"].Value;
-        }
 
-        //public void Load(string nazwa_bazy = null)
-        //{
-        //Config = Config ?? new Config();
-        //Config.Baza = Config.Baza ?? new Baza() { NazwaBazy = nazwa_bazy };
-        //}
+            DirectoryInfo di = new DirectoryInfo($"{SonetaExplorerCatalog}");
+            WersjaComboBox.ItemsSource = di.GetDirectories().Select(x => x.Name).ToList();
+        }
 
         private void LoadContext(string database_name)
         {
-            //string connectionString = DbSetting.GetConnectionString(database_name);
             string connectionString = ConfigurationManager.ConnectionStrings[database_name]?.ConnectionString;
             if (connectionString == null)
             {
-                MessageBox.Show("Nie znaleziono wpisu w App.config dla podanej bazy");
+                MessageBox.Show("Nie znaleziono wpisu w App.config dla bazy - " + database_name);
                 return;
             }
             Context = new BazaDb();
@@ -73,6 +65,12 @@ namespace RunEnova
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (Baza == null)
+            {
+                MessageBox.Show("Nie wybrano żadnej bazy danych");
+                return;
+            }
+
             ProcessStartInfo startInfo = new ProcessStartInfo();
 
             if ((bool)SonetaExplorerRadioBtn?.IsChecked)
@@ -87,10 +85,6 @@ namespace RunEnova
 
             try
             {
-                //using (Process exeProcess = Process.Start(startInfo))
-                //{
-                //    exeProcess.WaitForExit();
-                //}
                 Process.Start(startInfo);
             }
             catch (Exception ex)
@@ -112,11 +106,8 @@ namespace RunEnova
             else
                 Baza.FolderApp = ((ComboBox)sender).SelectedItem?.ToString();
         }
-        private void SonetaExplorerRadioBtn_Checked_1(object sender, RoutedEventArgs e)
+        private void SonetaExplorerRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            if (WersjaComboBox == null)
-                return;
-
             if (string.IsNullOrWhiteSpace(SonetaExplorerCatalog))
                 return;
 
@@ -171,8 +162,7 @@ namespace RunEnova
 
             if (Context.Baza.FirstOrDefault(x => x.Id == Baza.Id) == null)
                 Context.Baza.Add(Baza);
-            //else
-            //Context.Baza.Update(Config.Baza);
+
             Context.SaveChanges();
 
             MessageBox.Show("Zapisano ustawienia!");
@@ -182,11 +172,8 @@ namespace RunEnova
         {
             string nazwa_bazy = ((ComboBox)sender).SelectedItem.ToString();
 
-            if (ListaBazEnova.ContainsKey(nazwa_bazy))
-                AktualnaBazaEnova = ListaBazEnova[nazwa_bazy];
             AktualnaBazaSQL = ListaBazSQL[nazwa_bazy];
 
-            //Load(AktualnaBazaSQL);
             LoadContext("BazyEnova");
             Baza c = Context?.Baza?.FirstOrDefault(x => x.NazwaBazy == AktualnaBazaSQL);
             if (c != null)
@@ -220,7 +207,6 @@ namespace RunEnova
         {
             List<string> lista = new List<string>();
 
-            //string conString = DbSetting.GetConnectionString(AktualnaBazaSQL);
             string conString = ConfigurationManager.ConnectionStrings[AktualnaBazaSQL]?.ConnectionString;
 
             using (SqlConnection con = new SqlConnection(conString))
@@ -243,59 +229,38 @@ namespace RunEnova
         private void BazaComboBox_DropDownOpened(object sender, EventArgs e)
         {
             ListaBazSQL = new Dictionary<string, string>();
-            ListaBazEnova = new Dictionary<string, string>();
 
-            List<string> nazwyBaz = new List<string>();
             Dictionary<string, string> bazy = new Dictionary<string, string>();
 
             string listaBazDanych = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Soneta\\Lista baz danych.xml";
 
             var dokument = XDocument.Load(listaBazDanych);
             IEnumerable<XElement> databaseList = dokument.Element("DatabaseCollection").Elements("MsSqlDatabase");
-            //IEnumerable<XElement> dbTupleDefinitionXml = sessionXml.Element("MsSqlDatabase").Elements();
 
             foreach (var item in databaseList)
             {
                 bazy.Add(item.Element("Name").Value, item.Element("DatabaseName").Value);
             }
 
-            //var filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "appsettings.json");
-            //string json = File.ReadAllText(filePath);
-            //JObject jsonObj = JsonConvert.DeserializeObject<JObject>(json);
-            //JToken jtoken = jsonObj.Value<JToken>();
-
-            //var t = jtoken.Children().Values();
-
-            //foreach (var item in t.Values())
-            //{
-            //    nazwyBaz.Add(item.ToString().Split('"').ElementAt(1));
-            //}
-
             ConnectionStringSettingsCollection connectionStrings = ConfigurationManager.ConnectionStrings;
 
             foreach (ConnectionStringSettings conn in connectionStrings)
             {
-                nazwyBaz.Add(conn.Name);
-            }
-
-            for (int i = 0; i < nazwyBaz.Count; i++)
-            {
-                if (nazwyBaz[i] == "BazyEnova")
+                if (conn.Name == "BazyEnova")
                     continue;
 
                 bool dodaj = true;
                 foreach (var item in bazy)
                 {
-                    if (item.Value == nazwyBaz[i])
+                    if (item.Value == conn.Name)
                     {
-                        ListaBazSQL.Add(nazwyBaz[i] + " ( " + item.Key + " ) ", nazwyBaz[i]);
-                        ListaBazEnova.Add(nazwyBaz[i] + " ( " + item.Key + " ) ", item.Key);
+                        ListaBazSQL.Add(conn.Name + " ( " + item.Key + " ) ", conn.Name);
                         dodaj = false;
                     }
                 }
 
                 if (dodaj)
-                    ListaBazSQL.Add(nazwyBaz[i] + " ( x ) ", nazwyBaz[i]);
+                    ListaBazSQL.Add(conn.Name + " ( x ) ", conn.Name);
             }
             BazaComboBox.ItemsSource = ListaBazSQL.Keys;
         }
@@ -310,9 +275,7 @@ namespace RunEnova
                 MessageBox.Show("Proszę wybrać bazę danych");
                 return;
             }
-
-
-            //string conString = DbSetting.GetConnectionString(AktualnaBazaSQL);
+            
             string conString = ConfigurationManager.ConnectionStrings[AktualnaBazaSQL]?.ConnectionString;
 
             using (SqlConnection con = new SqlConnection(conString))
@@ -347,7 +310,6 @@ namespace RunEnova
             }
 
             Info info = new Info(AktualnaBazaSQL, sysInfoList, featureDict, conString);
-            //info.SizeToContent = SizeToContent.WidthAndHeight;
             info.Show();
         }
 
@@ -388,16 +350,7 @@ namespace RunEnova
 
         private void PobierzBazyBtn_Click(object sender, RoutedEventArgs e)
         {
-            //if (ListaBaz != null && ListaBaz.Count > 0)
-            //{
-            //    BazaComboBox.ItemsSource = ListaBaz;
-            //    return;
-            //}
-
             Cursor = Cursors.Wait;
-
-            //List<string> list = new List<string>();
-            //ListaBaz = new List<string>();
 
             string conString;
             string[] listaInstancjiSQL = SqlHelper.ListLocalSqlInstances().ToArray();
@@ -444,8 +397,6 @@ namespace RunEnova
                         DbSetting.CreateConnectionString(sqlName, baza, null, null);
 
                         ConfigurationManager.RefreshSection("connectionStrings");
-
-                        var conect = ConfigurationManager.ConnectionStrings;
                     }
                 }
             }
@@ -455,12 +406,6 @@ namespace RunEnova
 
         private void WprowadzZmianyZPanelu()
         {
-            //if (ConfigChanged)
-            //{
-            //    ConfigChanged = false;
-            //    return;
-            //}
-
             if (Baza == null)
             {
                 PanelTxt.Text = string.Empty;
@@ -621,6 +566,18 @@ namespace RunEnova
                 DirectoryInfo dir = new DirectoryInfo($"{SonetaSerwerCatalog}");
                 WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
             }
+        }
+
+        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            PopupInfo.IsOpen = true;
+            PopupInfo.Visibility = Visibility.Visible;
+        }
+
+        private void Image_MouseMove(object sender, MouseEventArgs e)
+        {
+            PopupInfo.IsOpen = false;
+            PopupInfo.Visibility = Visibility.Hidden;
         }
     }
 }

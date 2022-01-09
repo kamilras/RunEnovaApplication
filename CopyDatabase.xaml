@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Kopiuj ustawienia bazy" Height="715.654" Width="434.375">
     <Grid Margin="0,0,2,0">
-        <ComboBox x:Name="ListaBaz" HorizontalAlignment="Left" Margin="15,57,0,0" VerticalAlignment="Top" Width="327" DropDownOpened="ListaBaz_DropDownOpened" SelectionChanged="ListaBaz_SelectionChanged" />
+        <ComboBox x:Name="ListaBaz" HorizontalAlignment="Left" Margin="15,29,0,0" VerticalAlignment="Top" Width="327" DropDownOpened="ListaBaz_DropDownOpened" SelectionChanged="ListaBaz_SelectionChanged" />
         <Label Content="/extpath=" HorizontalAlignment="Left" Margin="15,142,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.442,0.362" Width="71"/>
         <Label Content="/dbconfig=" HorizontalAlignment="Left" Margin="15,173,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.442,0.362" Width="71" Height="26"/>
         <TextBox x:Name="dbconfigAppLbl" Text="" HorizontalAlignment="Left" Margin="86,176,0,0" VerticalAlignment="Top" IsEnabled="False" MinWidth="333"/>
@@ -30,9 +30,13 @@
         <CheckBox x:Name="extSerwChBox" Content="/ext=" HorizontalAlignment="Left" Margin="17,560,0,0" VerticalAlignment="Top" Width="110" Height="18" IsEnabled="False"/>
         <Button x:Name="KopiujBtn" Content="Kopiuj" HorizontalAlignment="Left" Margin="225,615,0,0" VerticalAlignment="Top" Width="117" Height="42" Background="#FFBCDAB3" Click="KopiujBtn_Click" />
         <Button x:Name="ZamknijBtn" Content="Zamknij" HorizontalAlignment="Left" Margin="46,615,0,0" VerticalAlignment="Top" Width="106" Height="44" Click="ZamknijBtn_Click"/>
-        <Label Content="Aplikacja" HorizontalAlignment="Left" Margin="112,94,0,0" VerticalAlignment="Top" Width="70"/>
-        <Label Content="Serwer" HorizontalAlignment="Left" Margin="91,370,0,0" VerticalAlignment="Top" Width="61"/>
+        <Label Content="Aplikacja" HorizontalAlignment="Left" Margin="192,69,0,0" VerticalAlignment="Top" Width="70"/>
+        <Label Content="Serwer" HorizontalAlignment="Left" Margin="192,342,0,0" VerticalAlignment="Top" Width="61"/>
         <TextBox x:Name="extpathAppTxtBox" HorizontalAlignment="Left" Margin="86,145,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="False" MinWidth="333"/>
+        <Label Content="Wersja" HorizontalAlignment="Left" Margin="15,111,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.442,0.362" Width="71"/>
+        <TextBox x:Name="WersjaAppTxtBox" HorizontalAlignment="Left" Margin="86,115,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="False" MinWidth="333"/>
+        <Label Content="Wersja" HorizontalAlignment="Left" Margin="15,377,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.442,0.362" Width="72" Height="31"/>
+        <TextBox x:Name="WersjaSerwTxtBox" Text="" HorizontalAlignment="Left" Margin="86,382,0,0" VerticalAlignment="Top" IsEnabled="False" MinWidth="333" />
 
 
     </Grid>

@@ -60,6 +60,7 @@ namespace RunEnovaApplication
             operatorLbl.Text = Baza.Operator;
             nodbextensionsAppChBox.IsChecked = Baza.BezDLLSerweraApp;
             extAppChBox.IsChecked = Baza.BezDodatkowApp;
+            WersjaAppTxtBox.Text = Baza.FolderApp;
 
             extpathSerwLbl.Text = Baza.FolderDodatkowServ;
             dbconfigSerwLbl.Text = Baza.ListaBazDanychServ;
@@ -67,6 +68,7 @@ namespace RunEnovaApplication
             nodbextensionsSerwChBox.IsChecked = Baza.BezDLLSerweraServ;
             extSerwChBox.IsChecked = Baza.BezDodatkowServ;
             noshedulerSerwChBox.IsChecked = Baza.BezHarmonogramuServ;
+            WersjaSerwTxtBox.Text = Baza.FolderServ;
         }
 
         private void KopiujBtn_Click(object sender, RoutedEventArgs e)
@@ -84,6 +86,7 @@ namespace RunEnovaApplication
         {
             Close();
         }
+
     }
 
     public class KopiujBtnValueEventArgs : EventArgs

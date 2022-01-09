@@ -42,7 +42,6 @@ namespace RunEnova
 
             string str = ConfigurationManager.ConnectionStrings["BazyEnova"]?.ConnectionString;
 
-            HasloTxtBox = new PasswordBox() { IsEnabled = false };
             WinAutenticationChkBox.IsChecked = true;
 
             if (string.IsNullOrEmpty(str))
@@ -54,12 +53,18 @@ namespace RunEnova
             else
             {
                 var conn = new SqlConnectionStringBuilder(str);
-                ListaSQLCmbBox.SelectedItem = conn.DataSource;
-                UzytkownikTxtBox.Text = conn.UserID;
-                BazaChkBox.IsChecked = true;
+                if (!string.IsNullOrEmpty(conn.DataSource))
+                {
+                    ListaSQLCmbBox.SelectedItem = conn.DataSource;
+                    WybranaBaza = (string)ListaSQLCmbBox.SelectedItem;
+                    BazaChkBox.IsChecked = true;
+                }
 
                 if (!string.IsNullOrEmpty(conn.UserID))
+                {
+                    UzytkownikTxtBox.Text = conn.UserID;
                     WinAutenticationChkBox.IsChecked = false;
+                }
 
                 if (CheckIfDatabaseExist("BazyEnova", str))
                 {
@@ -76,7 +81,7 @@ namespace RunEnova
 
         private void DodajSerwerSQLBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (WybranaBaza != (string)ListaSQLCmbBox.SelectedItem)
+            if (WybranaBaza != (string)ListaSQLCmbBox.SelectedItem && (bool)BazaChkBox.IsChecked)
             {
                 string baza = (string)ListaSQLCmbBox.SelectedItem;
                 string pass = null;
@@ -99,27 +104,36 @@ namespace RunEnova
                     DbSetting.CreateConnectionString(baza, "BazyEnova", user, pass);
                 }
             }
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            config.AppSettings.Settings["SonetaSerwerPath"].Value = CatalogSerwer;
+            config.AppSettings.Settings["SonetaExplorerPath"].Value = CatalogExplorer;
+
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
+            ConfigurationManager.RefreshSection("connectionStrings");
 
             this.Close();
-        }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            BazaChkBox.IsChecked = false;
-            BazaChkBox.IsEnabled = true;
         }
 
         public bool CheckIfDatabaseExist(string databaseName, string connString)
         {
             var cmdText = "select count(*) from master.dbo.sysdatabases where name=@database";
 
-            using (var sqlConnection = new SqlConnection(connString))
+            using (var conn = new SqlConnection(connString))
             {
-                using (var sqlCmd = new SqlCommand(cmdText, sqlConnection))
+                using (var sqlCmd = new SqlCommand(cmdText, conn))
                 {
                     sqlCmd.Parameters.Add("@database", SqlDbType.NVarChar).Value = databaseName;
-
-                    sqlConnection.Open();
+                    try
+                    {
+                        conn.Open();
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Błąd podczas sprawdzania istnienia bazy " + conn.Database + " na serwerze - " + conn.DataSource + Environment.NewLine + ex.Message);
+                        return false;
+                    }
 
                     return Convert.ToInt32(sqlCmd.ExecuteScalar()) > 0;
                 }
@@ -140,8 +154,6 @@ namespace RunEnova
 
         private void SelectExplorerCatalogBtn_Click(object sender, RoutedEventArgs e)
         {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
                 dialog.RootFolder = Environment.SpecialFolder.ProgramFilesX86;
@@ -151,16 +163,10 @@ namespace RunEnova
             }
 
             SonetaExplorerTxtBox.Text = CatalogExplorer;
-
-            config.AppSettings.Settings["SonetaExplorerPath"].Value = CatalogExplorer;
-            config.Save(ConfigurationSaveMode.Modified);
-            ConfigurationManager.RefreshSection("appSettings");
         }
 
         private void SelectSerwerCatalogBtn_Click(object sender, RoutedEventArgs e)
         {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
                 dialog.RootFolder = Environment.SpecialFolder.MyComputer;
@@ -170,10 +176,16 @@ namespace RunEnova
             }
 
             SonetaSerwerTxtBox.Text = CatalogSerwer;
+        }
 
-            config.AppSettings.Settings["SonetaSerwerPath"].Value = CatalogSerwer;
-            config.Save(ConfigurationSaveMode.Modified);
-            ConfigurationManager.RefreshSection("appSettings");
+        private void ListaSQLCmbBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (WybranaBaza == (string)((ComboBox)sender).SelectedItem)
+            {
+                BazaChkBox.IsChecked = true;
+            }
+            else
+                BazaChkBox.IsChecked = false;
         }
     }
 }

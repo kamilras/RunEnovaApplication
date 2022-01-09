@@ -7,33 +7,33 @@
         mc:Ignorable="d"
         Title="Konfiguracja" Height="450" Width="750">
     <Grid>
-        <Label Content="Plik z listą baz danych aplikacja" HorizontalAlignment="Left" Margin="66,99,0,0" VerticalAlignment="Top" Width="177" ToolTip="extpath"/>
-        <Label Content="Plik z listą baz danych serwer" HorizontalAlignment="Left" Margin="66,246,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.29,-0.312" Width="178" Height="26" ToolTip="dbconfig"/>
-        <CheckBox x:Name="BezDodatkowSerwChkBox" Content="bez żadnych dodatków" HorizontalAlignment="Left" Margin="74,313,0,0" VerticalAlignment="Top" Height="16" Width="157" />
+        <Label Content="Plik z listą baz danych aplikacja" HorizontalAlignment="Left" Margin="66,99,0,0" VerticalAlignment="Top" Width="177" ToolTip="dbconfig="/>
+        <Label Content="Plik z listą baz danych serwer" HorizontalAlignment="Left" Margin="66,246,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.29,-0.312" Width="178" Height="26" ToolTip="dbconfig="/>
+        <CheckBox x:Name="BezDodatkowSerwChkBox" Content="bez żadnych dodatków" HorizontalAlignment="Left" Margin="74,313,0,0" VerticalAlignment="Top" Height="16" Width="157" ToolTip="ext="/>
         <CheckBox x:Name="BezDLLSerweraSerwChkBox" Content="bez dodatków z bazy danych" HorizontalAlignment="Left" Margin="226,313,0,0" VerticalAlignment="Top" Height="14" Width="177" ToolTip="nodbextensions"/>
-        <Label Content="Plik z konfiguracją" HorizontalAlignment="Left" Margin="66,125,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.29,-0.312" Width="177" Height="26" ToolTip="dbconfig"/>
-        <Label Content="Folder z dodatkami dla serwera" HorizontalAlignment="Left" Margin="65,269,0,0" VerticalAlignment="Top" Width="179" ToolTip="extpath"/>
-        <Label Content="Port:" HorizontalAlignment="Left" Margin="580,301,0,0" VerticalAlignment="Top" Width="55" Height="33" FontSize="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"/>
-        <Label Content="Operator" HorizontalAlignment="Left" Margin="413,174,0,0" VerticalAlignment="Top" Width="130" Height="31" FontSize="14"/>
-        <ComboBox x:Name="OperatorBtn" HorizontalAlignment="Left" Margin="484,175,0,0" VerticalAlignment="Top" Width="224" Height="27" DropDownOpened="OperatorBtn_DropDownOpened"/>
+        <Label Content="Plik z konfiguracją" HorizontalAlignment="Left" Margin="66,125,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.29,-0.312" Width="177" Height="26" ToolTip="config="/>
+        <Label Content="Folder z dodatkami dla serwera" HorizontalAlignment="Left" Margin="65,269,0,0" VerticalAlignment="Top" Width="179" ToolTip="extpath="/>
+        <Label Content="Port:" HorizontalAlignment="Left" Margin="580,301,0,0" VerticalAlignment="Top" Width="55" Height="33" FontSize="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" ToolTip="port="/>
+        <Label Content="Operator" HorizontalAlignment="Left" Margin="413,174,0,0" VerticalAlignment="Top" Width="130" Height="31" FontSize="14" ToolTip="operator="/>
+        <ComboBox x:Name="OperatorBtn" HorizontalAlignment="Left" Margin="484,175,0,0" VerticalAlignment="Top" Width="224" Height="27" DropDownOpened="OperatorBtn_DropDownOpened" />
         <TextBox x:Name="SerwerDLLFolderTxt" HorizontalAlignment="Left" Margin="248,271,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="460"/>
         <TextBox x:Name="ListaBazDanychAplikacjaTxt" HorizontalAlignment="Left" Margin="248,101,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="460"/>
         <TextBox x:Name="ListaBazDanychSerwerTxt" HorizontalAlignment="Left" Margin="248,248,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="460"/>
         <TextBox x:Name="KonfiguracjaAplikacjaTxt" HorizontalAlignment="Left" Margin="248,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="460"/>
-        <Label Content="Folder z dodatkami dla aplikacji" HorizontalAlignment="Left" Margin="67,70,0,0" VerticalAlignment="Top" Width="177" ToolTip="extpath"/>
+        <Label Content="Folder z dodatkami dla aplikacji" HorizontalAlignment="Left" Margin="67,70,0,0" VerticalAlignment="Top" Width="177" ToolTip="extpath="/>
         <TextBox x:Name="AplikacjaDLLFolderTxt" HorizontalAlignment="Left" Margin="249,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="460"/>
-        <Label Content="Plik ze ścieżką do folderu UI" HorizontalAlignment="Left" Margin="66,152,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.29,-0.312" Width="177" Height="26" ToolTip="dbconfig"/>
+        <Label Content="Plik ze ścieżką do folderu UI" HorizontalAlignment="Left" Margin="66,152,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.29,-0.312" Width="177" Height="26" ToolTip="folder="/>
         <TextBox x:Name="FolderUIAplikacjaTxt" HorizontalAlignment="Left" Margin="248,152,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="460"/>
         <Button x:Name="OKBtn" Content="OK" HorizontalAlignment="Left" Margin="407,355,0,0" VerticalAlignment="Top" Width="302" Height="34" Click="OKBtn_Click"/>
         <Button x:Name="KopiujBazeBtn" Content="Kopiuj z bazy..." HorizontalAlignment="Left" Margin="72,355,0,0" VerticalAlignment="Top" Height="34" Width="274" Click="KopiujBazeBtn_Click" />
         <Separator HorizontalAlignment="Left" Margin="86,36,0,0" VerticalAlignment="Top" Height="10" Width="606"/>
         <Separator HorizontalAlignment="Left" Margin="86,203,0,0" VerticalAlignment="Top" Height="10" Width="606"/>
-        <Label Content="Aplikacja:" HorizontalAlignment="Left" Margin="46,41,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.121,-1.065" Width="203" Height="29" Foreground="Black" Background="#FF61D400" FontSize="14"/>
-        <Label Content="Serwer:" HorizontalAlignment="Left" Margin="46,208,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.121,-1.065" Width="203" Height="29" Background="#FF00B9FF" FontSize="14"/>
+        <Label Content="Aplikacja:" HorizontalAlignment="Left" Margin="46,41,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.121,-1.065" Width="203" Height="29" Foreground="Black" Background="#FF61D400" FontSize="14" />
+        <Label Content="Serwer:" HorizontalAlignment="Left" Margin="46,208,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.121,-1.065" Width="203" Height="29" Background="#FF00B9FF" FontSize="14" />
         <Separator HorizontalAlignment="Left" Margin="86,296,0,0" VerticalAlignment="Top" Height="10" Width="606"/>
-        <TextBox x:Name="PortTxt" HorizontalAlignment="Left" Margin="636,306,0,0" Text="00000" TextWrapping="WrapWithOverflow" VerticalAlignment="Top" Width="72" Height="28" TextAlignment="Center" FontSize="16" FontWeight="Bold"/>
-        <CheckBox x:Name="BezHarmonogramuChkBox" Content="bez harmonogramu zadań" HorizontalAlignment="Left" Margin="407,313,0,0" VerticalAlignment="Top" Width="168" IsChecked="True" ToolTip="noscheduler" Height="16"/>
-        <CheckBox x:Name="BezDodatkowAppChkBox" Content="bez żadnych dodatków" HorizontalAlignment="Left" Margin="72,182,0,0" VerticalAlignment="Top" Height="16" Width="157" />
-        <CheckBox x:Name="BezDLLSerweraAppChkBox" Content="bez dodatków z bazy danych" HorizontalAlignment="Left" Margin="226,183,0,0" VerticalAlignment="Top" Height="14" Width="182" ToolTip="nodbextensions"/>
+        <TextBox x:Name="PortTxt" HorizontalAlignment="Left" Margin="636,306,0,0" Text="00000" TextWrapping="WrapWithOverflow" VerticalAlignment="Top" Width="72" Height="28" TextAlignment="Center" FontSize="16" FontWeight="Bold" />
+        <CheckBox x:Name="BezHarmonogramuChkBox" Content="bez harmonogramu zadań" HorizontalAlignment="Left" Margin="407,313,0,0" VerticalAlignment="Top" Width="168" IsChecked="True" ToolTip="noscheduler" Height="16" />
+        <CheckBox x:Name="BezDodatkowAppChkBox" Content="bez żadnych dodatków" HorizontalAlignment="Left" Margin="72,182,0,0" VerticalAlignment="Top" Height="16" Width="157" ToolTip="ext=" />
+        <CheckBox x:Name="BezDLLSerweraAppChkBox" Content="bez dodatków z bazy danych" HorizontalAlignment="Left" Margin="226,183,0,0" VerticalAlignment="Top" Height="14" Width="182" ToolTip="nodbextensions" />
     </Grid>
 </Window>
