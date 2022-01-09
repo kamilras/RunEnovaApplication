@@ -18,7 +18,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace RunEnova
 {
@@ -47,6 +46,9 @@ namespace RunEnova
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             SonetaSerwerCatalog = config.AppSettings.Settings["SonetaSerwerPath"].Value;
             SonetaExplorerCatalog = config.AppSettings.Settings["SonetaExplorerPath"].Value;
+
+            if (string.IsNullOrEmpty(SonetaExplorerCatalog))
+                return;
 
             DirectoryInfo di = new DirectoryInfo($"{SonetaExplorerCatalog}");
             WersjaComboBox.ItemsSource = di.GetDirectories().Select(x => x.Name).ToList();

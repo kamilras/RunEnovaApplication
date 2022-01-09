@@ -27,22 +27,23 @@
     </Window.Resources>
     <Grid VerticalAlignment="Center" Height="263" Width="766" Margin="24,0,13.2,16.2">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="197*"/>
-            <ColumnDefinition Width="153*"/>
+            <ColumnDefinition Width="166*"/>
+            <ColumnDefinition Width="265*"/>
+            <ColumnDefinition Width="335*"/>
         </Grid.ColumnDefinitions>
-        <Image HorizontalAlignment="Left" Height="78" Margin="10,10,0,0" VerticalAlignment="Top" Width="126" Source="OPENOVZLCRM365-1.jpg" Stretch="Fill" MouseLeftButtonDown="Image_MouseLeftButtonDown" MouseMove="Image_MouseMove"></Image>
-        <Button x:Name="UruchomBtn" Content="Uruchom" HorizontalAlignment="Left" Margin="53.8,191,0,0" VerticalAlignment="Top" Height="47" Width="271" Click="Button_Click" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" BorderBrush="#FF089720" Background="#FF21EC17" Grid.Column="1"/>
-        <Label Content="Wybierz wersję:" HorizontalAlignment="Left" Margin="53.8,111,0,0" VerticalAlignment="Top" Width="271" HorizontalContentAlignment="Left" FontWeight="Bold" FontSize="14" Height="30" Grid.Column="1"/>
-        <ComboBox x:Name="WersjaComboBox" HorizontalAlignment="Left" Margin="53.8,147,0,0" VerticalAlignment="Top" Width="271" SelectionChanged="WersjaComboBox_SelectionChanged" Height="29" Grid.Column="1" DropDownOpened="WersjaComboBox_DropDownOpened"/>
-        <Label Content="Wybierz bazę :" HorizontalAlignment="Left" Margin="53.8,37,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.659,0.494" Width="151" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" FontSize="14" FontWeight="Bold" Grid.Column="1" Height="31"/>
+        <Image HorizontalAlignment="Left" Height="40" Margin="10,28,0,0" VerticalAlignment="Top" Width="126" Source="logoAplikacji.png" MouseLeftButtonDown="Image_MouseLeftButtonDown" MouseMove="Image_MouseMove" Stretch="Fill"/>
+        <Button x:Name="UruchomBtn" Content="Uruchom" HorizontalAlignment="Left" Margin="54,191,0,0" VerticalAlignment="Top" Height="47" Width="271" Click="Button_Click" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" BorderBrush="#FF089720" Background="#FF21EC17" Grid.Column="2"/>
+        <Label Content="Wybierz wersję:" HorizontalAlignment="Left" Margin="54,111,0,0" VerticalAlignment="Top" Width="271" HorizontalContentAlignment="Left" FontWeight="Bold" FontSize="14" Height="30" Grid.Column="2"/>
+        <ComboBox x:Name="WersjaComboBox" HorizontalAlignment="Left" Margin="54,147,0,0" VerticalAlignment="Top" Width="271" SelectionChanged="WersjaComboBox_SelectionChanged" Height="29" Grid.Column="2" DropDownOpened="WersjaComboBox_DropDownOpened"/>
+        <Label Content="Wybierz bazę :" HorizontalAlignment="Left" Margin="54,37,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.659,0.494" Width="151" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" FontSize="14" FontWeight="Bold" Grid.Column="2" Height="31"/>
         <Button x:Name="ZapiszBtn" Content="Zapisz dla tej bazy" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="126" Click="ZapiszBtn_Click" Height="47" Background="#FF98CBCB"/>
-        <ComboBox x:Name="BazaComboBox" HorizontalAlignment="Left" Margin="53.8,69,0,0" VerticalAlignment="Top" Width="271" Height="29" SelectionChanged="ComboBox_SelectionChanged" DropDownOpened="BazaComboBox_DropDownOpened" Grid.Column="1"/>
-        <Button x:Name="InfoBtn" Content="Info" HorizontalAlignment="Left" Margin="398,68,0,0" VerticalAlignment="Top" Width="65" Click="InfoBtn_Click" Height="29" Background="#FFF7F0A6" Grid.ColumnSpan="2"/>
+        <ComboBox x:Name="BazaComboBox" HorizontalAlignment="Left" Margin="54,69,0,0" VerticalAlignment="Top" Width="271" Height="29" SelectionChanged="ComboBox_SelectionChanged" DropDownOpened="BazaComboBox_DropDownOpened" Grid.Column="2"/>
+        <Button x:Name="InfoBtn" Content="Info" HorizontalAlignment="Left" Margin="232,68,0,0" VerticalAlignment="Top" Width="65" Click="InfoBtn_Click" Height="29" Background="#FFF7F0A6" Grid.ColumnSpan="2" Grid.Column="1"/>
         <Button x:Name="ConfigBtn" Content="Konfiguracja" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.218,-0.969" Width="126" Height="47" Click="ConfigBtn_Click" />
-        <TextBox x:Name="PanelTxt" HorizontalAlignment="Left" Margin="159,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="304" Height="111" Grid.ColumnSpan="2" Background="#FFD7F1E2" LostFocus="PanelTxt_LostFocus" />
-        <Button x:Name="PobierzBazyBtn" Content="Pobierz bazy" HorizontalAlignment="Left" Margin="234.8,43,0,0" VerticalAlignment="Top" Height="21" Width="90" Grid.Column="1" Background="#FFDAA951" Click="PobierzBazyBtn_Click"/>
-        <RadioButton x:Name="SonetaServerRadioBtn" Content="SonetaServer" HorizontalAlignment="Left" Margin="185,91,0,0" VerticalAlignment="Top" Checked="SonetaServerRadioBtn_Checked" Width="102" Height="16"/>
-        <RadioButton x:Name="SonetaExplorerRadioBtn" Content="SonetaExplorer" HorizontalAlignment="Left" Margin="185,68,0,0" VerticalAlignment="Top" Checked="SonetaExplorerRadioBtn_Checked" IsChecked="True" Width="115" Height="16"/>
+        <TextBox x:Name="PanelTxt" HorizontalAlignment="Left" Margin="159,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="304" Height="111" Grid.ColumnSpan="3" Background="#FFD7F1E2" LostFocus="PanelTxt_LostFocus" />
+        <Button x:Name="PobierzBazyBtn" Content="Pobierz bazy" HorizontalAlignment="Left" Margin="235,43,0,0" VerticalAlignment="Top" Height="21" Width="90" Grid.Column="2" Background="#FFDAA951" Click="PobierzBazyBtn_Click"/>
+        <RadioButton x:Name="SonetaServerRadioBtn" Content="SonetaServer" HorizontalAlignment="Left" Margin="19,91,0,0" VerticalAlignment="Top" Checked="SonetaServerRadioBtn_Checked" Width="102" Height="16" Grid.Column="1"/>
+        <RadioButton x:Name="SonetaExplorerRadioBtn" Content="SonetaExplorer" HorizontalAlignment="Left" Margin="19,68,0,0" VerticalAlignment="Top" Checked="SonetaExplorerRadioBtn_Checked" IsChecked="True" Width="115" Height="16" Grid.Column="1"/>
         <Button x:Name="SerwerSQLBtn" Content="Ustawienia" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.218,-0.969" Width="126" Height="28" Click="SerwerSQLBtn_Click" />
         <Popup Name="PopupInfo" HorizontalAlignment="Left" VerticalAlignment="Top" Width="160" Height="20" IsOpen="False" Placement="Mouse" >
             <TextBlock Name="PopupTextBlock" Background="LightBlue" >
