@@ -1,13 +1,9 @@
-﻿using Microsoft.Data.SqlClient;
-using RunEnova.Extension;
-using RunEnova.Model;
-using RunEnovaApplication;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Configuration;
 using System.Text;
 using System.Windows;
+using RunEnova.Model;
+using RunEnovaApplication;
 
 namespace RunEnova
 {

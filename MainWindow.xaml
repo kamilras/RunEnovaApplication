@@ -31,9 +31,10 @@
             <ColumnDefinition Width="265*"/>
             <ColumnDefinition Width="335*"/>
         </Grid.ColumnDefinitions>
+        <CheckBox x:Name="SerwerStandardChkBox" Content="Soneta Web Standard" Grid.Column="2" HorizontalAlignment="Left" Margin="190,125,0,0" VerticalAlignment="Top" />
         <Image HorizontalAlignment="Left" Height="40" Margin="10,28,0,0" VerticalAlignment="Top" Width="126" Source="logoAplikacji.png" MouseLeftButtonDown="Image_MouseLeftButtonDown" MouseMove="Image_MouseMove" Stretch="Fill"/>
         <Button x:Name="UruchomBtn" Content="Uruchom" HorizontalAlignment="Left" Margin="54,191,0,0" VerticalAlignment="Top" Height="47" Width="271" Click="Button_Click" Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" BorderBrush="#FF089720" Background="#FF21EC17" Grid.Column="2"/>
-        <Label Content="Wybierz wersję:" HorizontalAlignment="Left" Margin="54,111,0,0" VerticalAlignment="Top" Width="271" HorizontalContentAlignment="Left" FontWeight="Bold" FontSize="14" Height="30" Grid.Column="2"/>
+        <Label Content="Wybierz wersję:" HorizontalAlignment="Left" Margin="54,111,0,0" VerticalAlignment="Top" Width="151" HorizontalContentAlignment="Left" FontWeight="Bold" FontSize="14" Height="30" Grid.Column="2"/>
         <ComboBox x:Name="WersjaComboBox" HorizontalAlignment="Left" Margin="54,147,0,0" VerticalAlignment="Top" Width="271" SelectionChanged="WersjaComboBox_SelectionChanged" Height="29" Grid.Column="2" DropDownOpened="WersjaComboBox_DropDownOpened"/>
         <Label Content="Wybierz bazę :" HorizontalAlignment="Left" Margin="54,37,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.659,0.494" Width="151" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" FontSize="14" FontWeight="Bold" Grid.Column="2" Height="31"/>
         <Button x:Name="ZapiszBtn" Content="Zapisz dla tej bazy" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="126" Click="ZapiszBtn_Click" Height="47" Background="#FF98CBCB"/>

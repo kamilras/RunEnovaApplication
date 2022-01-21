@@ -1,10 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RunEnova.Extension;
-using RunEnova.Model;
-using RunEnovaApplication.Extension;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,12 +6,14 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Xml.Linq;
+using Microsoft.Data.SqlClient;
+using RunEnova.Extension;
+using RunEnova.Model;
+using RunEnovaApplication.Extension;
 
 namespace RunEnova
 {
@@ -28,8 +24,9 @@ namespace RunEnova
     {
         private BazaDb Context { get; set; }
         public Baza Baza { get; set; }
-        public Dictionary<string, string> ListaBazSQL { get; set; }
+        public Dictionary<string, string[]> ListaBaz { get; set; }
         public static string AktualnaBazaSQL { get; set; }
+        public static string AktualnaBazaEnova { get; set; }
         public string SonetaExplorerParam = "";
         public string SonetaServerParam = "";
         public string SonetaExplorerCatalog { get; set; }
@@ -38,20 +35,6 @@ namespace RunEnova
         public MainWindow()
         {
             InitializeComponent();
-            LoadSettings();
-        }
-
-        private void LoadSettings()
-        {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            SonetaSerwerCatalog = config.AppSettings.Settings["SonetaSerwerPath"].Value;
-            SonetaExplorerCatalog = config.AppSettings.Settings["SonetaExplorerPath"].Value;
-
-            if (string.IsNullOrEmpty(SonetaExplorerCatalog))
-                return;
-
-            DirectoryInfo di = new DirectoryInfo($"{SonetaExplorerCatalog}");
-            WersjaComboBox.ItemsSource = di.GetDirectories().Select(x => x.Name).ToList();
         }
 
         private void LoadContext(string database_name)
@@ -81,13 +64,23 @@ namespace RunEnova
             }
             else
             {
-                startInfo.FileName = $"{SonetaSerwerCatalog}\\{WersjaComboBox.Text}\\SonetaServer.exe";
+                startInfo.FileName = $"{SonetaSerwerCatalog}\\{WersjaComboBox.Text}\\Soneta.Products.Server.Standard\\SonetaServer.exe";
             }
             startInfo.Arguments = PanelTxt.Text;
 
             try
             {
                 Process.Start(startInfo);
+
+                if ((bool)SerwerStandardChkBox.IsChecked)
+                {
+                    ProcessStartInfo startWebSerwer = new ProcessStartInfo();
+
+                    startInfo.FileName = $"{SonetaSerwerCatalog}\\{WersjaComboBox.Text}\\Soneta.Web.Standard\\Soneta.Web.Standard.exe";
+                    startInfo.Arguments = @"--console";
+
+                    Process.Start(startInfo);
+                }
             }
             catch (Exception ex)
             {
@@ -110,13 +103,15 @@ namespace RunEnova
         }
         private void SonetaExplorerRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(SonetaExplorerCatalog))
-                return;
+            if (!string.IsNullOrWhiteSpace(SonetaExplorerCatalog))
+            {
+                DirectoryInfo di = new DirectoryInfo($"{SonetaExplorerCatalog}");
+                WersjaComboBox.ItemsSource = di.GetDirectories().Select(x => x.Name).ToList();
+                if (Baza != null)
+                    WersjaComboBox.SelectedItem = Baza?.FolderApp;
+            }
 
-            DirectoryInfo di = new DirectoryInfo($"{SonetaExplorerCatalog}");
-            WersjaComboBox.ItemsSource = di.GetDirectories().Select(x => x.Name).ToList();
-            if (Baza != null)
-                WersjaComboBox.SelectedItem = Baza?.FolderApp;
+            SerwerStandardChkBox.Visibility = Visibility.Hidden;
 
             OdswiezUstawienia();
         }
@@ -126,8 +121,8 @@ namespace RunEnova
             if (string.IsNullOrEmpty(sonetaExplorerParam))
                 return string.Empty;
 
-            if (!string.IsNullOrEmpty(Baza.NazwaBazy))
-                return $"/database={Baza.NazwaBazy} {sonetaExplorerParam}";
+            if (!string.IsNullOrEmpty(AktualnaBazaEnova))
+                return $"/database={AktualnaBazaEnova} {sonetaExplorerParam}";
             return sonetaExplorerParam;
         }
 
@@ -136,20 +131,22 @@ namespace RunEnova
             if (string.IsNullOrEmpty(sonetaServerParam))
                 return string.Empty;
 
-            if (!string.IsNullOrEmpty(Baza.NazwaBazy))
-                return $"/console /database={Baza.NazwaBazy} {sonetaServerParam}";
+            if (!string.IsNullOrEmpty(AktualnaBazaEnova))
+                return $"/console /database={AktualnaBazaEnova} {sonetaServerParam}";
             return "/console " + sonetaServerParam;
         }
 
         private void SonetaServerRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(SonetaSerwerCatalog))
-                return;
+            if (!string.IsNullOrWhiteSpace(SonetaSerwerCatalog))
+            {
+                DirectoryInfo dir = new DirectoryInfo($"{SonetaSerwerCatalog}");
+                WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
+                if (Baza != null)
+                    WersjaComboBox.SelectedItem = Baza?.FolderServ;
+            }
 
-            DirectoryInfo dir = new DirectoryInfo($"{SonetaSerwerCatalog}");
-            WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
-            if (Baza != null)
-                WersjaComboBox.SelectedItem = Baza?.FolderServ;
+            SerwerStandardChkBox.Visibility = Visibility.Visible;
 
             OdswiezUstawienia();
         }
@@ -174,7 +171,8 @@ namespace RunEnova
         {
             string nazwa_bazy = ((ComboBox)sender).SelectedItem.ToString();
 
-            AktualnaBazaSQL = ListaBazSQL[nazwa_bazy];
+            AktualnaBazaSQL = ListaBaz[nazwa_bazy][0];
+            AktualnaBazaEnova = ListaBaz[nazwa_bazy][1];
 
             LoadContext("BazyEnova");
             Baza c = Context?.Baza?.FirstOrDefault(x => x.NazwaBazy == AktualnaBazaSQL);
@@ -230,18 +228,51 @@ namespace RunEnova
 
         private void BazaComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            ListaBazSQL = new Dictionary<string, string>();
+            ListaBaz = new Dictionary<string, string[]>();
 
             Dictionary<string, string> bazy = new Dictionary<string, string>();
 
-            string listaBazDanych = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Soneta\\Lista baz danych.xml";
+            List<string> bazyDanychEnovaLista = new List<string>();
 
-            var dokument = XDocument.Load(listaBazDanych);
-            IEnumerable<XElement> databaseList = dokument.Element("DatabaseCollection").Elements("MsSqlDatabase");
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Soneta";
 
-            foreach (var item in databaseList)
+            DirectoryInfo dir1 = new DirectoryInfo(folder);
+            FileInfo[] Files1 = dir1.GetFiles("*.xml");
+
+            foreach (FileInfo file in Files1)
             {
-                bazy.Add(item.Element("Name").Value, item.Element("DatabaseName").Value);
+                bazyDanychEnovaLista.Add(file.FullName);
+            }
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            string folderUstawienia = config.AppSettings.Settings["ListaBazDanychPath"].Value;
+
+            if (!string.IsNullOrEmpty(folderUstawienia))
+            {
+                DirectoryInfo dir2 = new DirectoryInfo(folderUstawienia);
+                FileInfo[] Files2 = dir2.GetFiles("*.xml");
+
+                foreach (FileInfo file in Files2)
+                {
+                    bazyDanychEnovaLista.Add(file.FullName);
+                }
+            }
+
+            foreach (string listaBazDanych in bazyDanychEnovaLista)
+            {
+                XDocument dokument = XDocument.Load(listaBazDanych);
+                IEnumerable<XElement> databaseList = null;
+                if (dokument.Root.Name == "DatabaseCollection")
+                    databaseList = dokument.Element("DatabaseCollection")?.Elements("MsSqlDatabase");
+
+                if (databaseList == null)
+                    continue;
+
+                foreach (XElement item in databaseList)
+                {
+                    if (!bazy.ContainsKey(item.Element("Name").Value))
+                        bazy.Add(item.Element("Name").Value, item.Element("DatabaseName").Value);
+                }
             }
 
             ConnectionStringSettingsCollection connectionStrings = ConfigurationManager.ConnectionStrings;
@@ -256,15 +287,15 @@ namespace RunEnova
                 {
                     if (item.Value == conn.Name)
                     {
-                        ListaBazSQL.Add(conn.Name + " ( " + item.Key + " ) ", conn.Name);
+                        ListaBaz.Add(conn.Name + " ( " + item.Key + " ) ", new string[] { conn.Name, item.Key });
                         dodaj = false;
                     }
                 }
 
                 if (dodaj)
-                    ListaBazSQL.Add(conn.Name + " ( x ) ", conn.Name);
+                    ListaBaz.Add(conn.Name + " ( x ) ", new string[] { conn.Name, null });
             }
-            BazaComboBox.ItemsSource = ListaBazSQL.Keys;
+            BazaComboBox.ItemsSource = ListaBaz.Keys;
         }
 
         private void InfoBtn_Click(object sender, RoutedEventArgs e)
@@ -277,7 +308,7 @@ namespace RunEnova
                 MessageBox.Show("Proszę wybrać bazę danych");
                 return;
             }
-            
+
             string conString = ConfigurationManager.ConnectionStrings[AktualnaBazaSQL]?.ConnectionString;
 
             using (SqlConnection con = new SqlConnection(conString))
@@ -397,7 +428,6 @@ namespace RunEnova
                     foreach (string baza in listaBazTemp)
                     {
                         DbSetting.CreateConnectionString(sqlName, baza, null, null);
-
                         ConfigurationManager.RefreshSection("connectionStrings");
                     }
                 }
@@ -558,13 +588,23 @@ namespace RunEnova
 
         private void WersjaComboBox_DropDownOpened(object sender, EventArgs e)
         {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            SonetaSerwerCatalog = config.AppSettings.Settings["SonetaSerwerPath"].Value;
+            SonetaExplorerCatalog = config.AppSettings.Settings["SonetaExplorerPath"].Value;
+
             if ((bool)SonetaExplorerRadioBtn.IsChecked)
             {
+                if (string.IsNullOrEmpty(SonetaExplorerCatalog))
+                    return;
+
                 DirectoryInfo dir = new DirectoryInfo($"{SonetaExplorerCatalog}");
                 WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
             }
             else
             {
+                if (string.IsNullOrEmpty(SonetaSerwerCatalog))
+                    return;
+
                 DirectoryInfo dir = new DirectoryInfo($"{SonetaSerwerCatalog}");
                 WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
             }

@@ -1,16 +1,13 @@
-﻿using RunEnova.Extension;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.SqlServer.Management.Smo.Wmi;
-using System.Linq;
+using RunEnova.Extension;
 using RunEnovaApplication.Extension;
-using System.Configuration;
-using System.Data.SqlClient;
-using System.Windows.Controls.Primitives;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace RunEnova
 {
@@ -22,6 +19,7 @@ namespace RunEnova
         string WybranaBaza { get; set; }
         public string CatalogExplorer { get; set; }
         public string CatalogSerwer { get; set; }
+        public string CatalogListaBazDanych { get; set; }
         public ServerSQLConfig()
         {
             InitializeComponent();
@@ -34,9 +32,11 @@ namespace RunEnova
 
             CatalogExplorer = config.AppSettings.Settings["SonetaExplorerPath"].Value;
             CatalogSerwer = config.AppSettings.Settings["SonetaSerwerPath"].Value;
+            CatalogListaBazDanych = config.AppSettings.Settings["ListaBazDanychPath"].Value;
 
             SonetaExplorerTxtBox.Text = CatalogExplorer;
             SonetaSerwerTxtBox.Text = CatalogSerwer;
+            ListaBazDancyhTxtBox.Text = CatalogListaBazDanych;
 
             ListaSQLCmbBox.ItemsSource = SqlHelper.ListLocalSqlInstances().ToArray();
 
@@ -108,6 +108,7 @@ namespace RunEnova
 
             config.AppSettings.Settings["SonetaSerwerPath"].Value = CatalogSerwer;
             config.AppSettings.Settings["SonetaExplorerPath"].Value = CatalogExplorer;
+            config.AppSettings.Settings["ListaBazDanychPath"].Value = CatalogListaBazDanych;
 
             config.Save(ConfigurationSaveMode.Modified);
             ConfigurationManager.RefreshSection("appSettings");
@@ -134,7 +135,6 @@ namespace RunEnova
                         System.Windows.Forms.MessageBox.Show("Błąd podczas sprawdzania istnienia bazy " + conn.Database + " na serwerze - " + conn.DataSource + Environment.NewLine + ex.Message);
                         return false;
                     }
-
                     return Convert.ToInt32(sqlCmd.ExecuteScalar()) > 0;
                 }
             }
@@ -154,9 +154,12 @@ namespace RunEnova
 
         private void SelectExplorerCatalogBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(CatalogExplorer))
+                CatalogExplorer = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + $"\\Soneta";
+
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
-                dialog.RootFolder = Environment.SpecialFolder.ProgramFilesX86;
+                dialog.SelectedPath = CatalogExplorer;
                 System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
                 CatalogExplorer = dialog.SelectedPath;
@@ -167,15 +170,34 @@ namespace RunEnova
 
         private void SelectSerwerCatalogBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(CatalogSerwer))
+                CatalogSerwer = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
-                dialog.RootFolder = Environment.SpecialFolder.MyComputer;
+                dialog.SelectedPath = CatalogSerwer;
                 System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
                 CatalogSerwer = dialog.SelectedPath;
             }
 
             SonetaSerwerTxtBox.Text = CatalogSerwer;
+        }
+
+        private void ListaBazDanychCatalogBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(CatalogListaBazDanych))
+                CatalogListaBazDanych = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Soneta";
+
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                dialog.SelectedPath = CatalogListaBazDanych;
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+                CatalogListaBazDanych = dialog.SelectedPath;
+            }
+
+            ListaBazDancyhTxtBox.Text = CatalogListaBazDanych;
         }
 
         private void ListaSQLCmbBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
