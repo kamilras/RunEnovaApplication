@@ -41,7 +41,7 @@ namespace RunEnova
         {
             string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
 
-            if(connectionString == null)
+            if (connectionString == null)
             {
                 MessageBox.Show("Nie znaleziono wpisu DefaultConnection w App.config dla domyślnego połączenia z bazą");
                 return;
@@ -52,9 +52,14 @@ namespace RunEnova
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (Baza == null)
+            if (Context == null || Context.Baza == null)
             {
                 MessageBox.Show("Nie wybrano żadnej bazy danych");
+                return;
+            }
+            else if (string.IsNullOrEmpty(AktualnaBazaEnova))
+            {
+                MessageBox.Show($"Nie znaleziono wpisu w listach baz danych dla bazy SQL {AktualnaBazaSQL}");
                 return;
             }
 
@@ -158,6 +163,11 @@ namespace RunEnova
             if (Context == null || Context.Baza == null)
             {
                 MessageBox.Show("Nie wybrano żadnej bazy danych");
+                return;
+            }
+            else if (string.IsNullOrEmpty(AktualnaBazaEnova))
+            {
+                MessageBox.Show($"Nie znaleziono wpisu w listach baz danych dla bazy SQL {AktualnaBazaSQL}");
                 return;
             }
 
@@ -282,7 +292,7 @@ namespace RunEnova
             {
                 var conStr = new SqlConnectionStringBuilder(conn.ConnectionString);
 
-                if (conn.Name == conStr.DataSource || conn.Name == "LocalSqlServer")
+                if (conn.Name == conStr.DataSource || conn.Name == "LocalSqlServer" || conn.Name == "DefaultConnection")
                     continue;
 
                 bool dodaj = true;
@@ -357,9 +367,14 @@ namespace RunEnova
 
         private void ConfigBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (Baza == null)
+            if (Context == null || Context.Baza == null)
             {
-                MessageBox.Show("Nie wybrano bazy");
+                MessageBox.Show("Nie wybrano żadnej bazy danych");
+                return;
+            }
+            else if (string.IsNullOrEmpty(AktualnaBazaEnova))
+            {
+                MessageBox.Show($"Nie znaleziono wpisu w listach baz danych dla bazy SQL {AktualnaBazaSQL}");
                 return;
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Configuration;
 using System.Text;
 using System.Windows;
 using RunEnova.Model;
@@ -144,10 +145,90 @@ namespace RunEnova
 
         private void KopiujBtn_Click(object sender, KopiujBtnValueEventArgs e)
         {
-            string baza = Baza.NazwaBazy;
+            string baza = Baza.NazwaBazySQL;
             Baza = e.WybranaBaza;
-            Baza.NazwaBazy = baza;
+            Baza.NazwaBazySQL = baza;
             WprowadzUstawienia();
+        }
+
+        private void AplikacjaDLLFolderPathBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string aplikacjaDLLFolderPath = Baza.FolderDodatkowApp;
+
+            if (string.IsNullOrEmpty(aplikacjaDLLFolderPath))
+                aplikacjaDLLFolderPath = $"C:\\Program Files\\Common Files\\Soneta\\Assemblies";
+
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                dialog.SelectedPath = aplikacjaDLLFolderPath;
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                aplikacjaDLLFolderPath = dialog.SelectedPath;
+            }
+            AplikacjaDLLFolderTxt.Text = aplikacjaDLLFolderPath;
+        }
+
+        private void SerwerDLLFolderPathBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string serwerDLLFolderPath = Baza.FolderDodatkowServ;
+
+            if (string.IsNullOrEmpty(serwerDLLFolderPath))
+                serwerDLLFolderPath = $"C:\\Program Files\\Common Files\\Soneta\\Assemblies";
+
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                dialog.SelectedPath = serwerDLLFolderPath;
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                serwerDLLFolderPath = dialog.SelectedPath;
+            }
+            SerwerDLLFolderTxt.Text = serwerDLLFolderPath;
+        }
+
+        private void ListaBazDanychAplikacjaPathBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            string listaBazDanychAplikacjaPath = config.AppSettings.Settings["ListaBazDanychPath"].Value;
+
+            if (string.IsNullOrEmpty(listaBazDanychAplikacjaPath))
+                listaBazDanychAplikacjaPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Soneta";
+
+            using (var dialog = new System.Windows.Forms.OpenFileDialog())
+            {
+                dialog.InitialDirectory = listaBazDanychAplikacjaPath;
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                ListaBazDanychAplikacjaTxt.Text = dialog.FileName;
+            }
+        }
+
+        private void ListaBazDanychSerwerPathBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            string listaBazDanychSerwerPath = config.AppSettings.Settings["ListaBazDanychPath"].Value;
+
+            if (string.IsNullOrEmpty(listaBazDanychSerwerPath))
+                listaBazDanychSerwerPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Soneta";
+
+            using (var dialog = new System.Windows.Forms.OpenFileDialog())
+            {
+                dialog.InitialDirectory = listaBazDanychSerwerPath;
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                ListaBazDanychSerwerTxt.Text = dialog.FileName;
+            }
+        }
+
+        private void KonfiguracjaAplikacjaPathBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            string konfiguracjaPath = config.AppSettings.Settings["ListaBazDanychPath"].Value;
+
+            if (string.IsNullOrEmpty(konfiguracjaPath))
+                konfiguracjaPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Soneta";
+
+            using (var dialog = new System.Windows.Forms.OpenFileDialog())
+            {
+                dialog.InitialDirectory = konfiguracjaPath;
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                KonfiguracjaAplikacjaTxt.Text = dialog.FileName;
+            }
         }
     }
 

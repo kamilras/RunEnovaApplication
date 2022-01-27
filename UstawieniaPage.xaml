@@ -31,7 +31,7 @@
             </Rectangle.RenderTransform>
         </Rectangle>
 
-        <ComboBox x:Name="OperatorComBox" HorizontalAlignment="Left" Margin="27,44,0,0" VerticalAlignment="Top" Width="231" Height="26" DropDownOpened="OperatorComBox_DropDownOpened" SelectionChanged="OperatorComBox_SelectionChanged" />
+        <ComboBox x:Name="OperatorComBox" HorizontalAlignment="Left" Margin="27,44,0,0" VerticalAlignment="Top" Width="231" Height="26" SelectionChanged="OperatorComBox_SelectionChanged" />
         <Button x:Name="ResetPassBtn" Content="Zmień hasło" HorizontalAlignment="Left" Margin="277,99,0,0" VerticalAlignment="Top" Height="40" Width="285" Click="ResetPassBtn_Click"/>
         <Button x:Name="DemoBtn" Content="Ustaw licencję demo" HorizontalAlignment="Left" Margin="134,193,0,0" VerticalAlignment="Top" Height="40" Width="285" Click="DemoBtn_Click"/>
         <TextBox x:Name="OperatorPassTxtBox" HorizontalAlignment="Left" Height="26" Margin="277,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="285" />

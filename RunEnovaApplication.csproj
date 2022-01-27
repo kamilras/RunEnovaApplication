@@ -335,6 +335,10 @@
     <Compile Include="Migrations\202112101027097_Initial.designer.cs">
       <DependentUpon>202112101027097_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202201271529112_Zmiany.cs" />
+    <Compile Include="Migrations\202201271529112_Zmiany.designer.cs">
+      <DependentUpon>202201271529112_Zmiany.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Baza.cs" />
     <Compile Include="Model\BazaDb.cs" />
@@ -424,6 +428,9 @@
     </Compile>
     <EmbeddedResource Include="Migrations\202112101027097_Initial.resx">
       <DependentUpon>202112101027097_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202201271529112_Zmiany.resx">
+      <DependentUpon>202201271529112_Zmiany.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

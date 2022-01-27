@@ -25,6 +25,7 @@ namespace RunEnova
         public string CatalogExplorer { get; set; }
         public string CatalogSerwer { get; set; }
         public string CatalogListaBazDanych { get; set; }
+        public List<string> LocalServer { get; set; }
         public ServerSQLConfig()
         {
             InitializeComponent();
@@ -43,17 +44,20 @@ namespace RunEnova
             SonetaSerwerTxtBox.Text = CatalogSerwer;
             ListaBazDancyhTxtBox.Text = CatalogListaBazDanych;
 
-            List<string> listaSerwerow = SqlHelper.ListLocalSqlInstances().ToList();
+            LocalServer = SqlHelper.ListLocalSqlInstances().ToList();
+
+            List<string> allServer = new List<string>();
+            allServer.AddRange(LocalServer);
 
             foreach (ConnectionStringSettings conStr in ConfigurationManager.ConnectionStrings)
             {
                 SqlConnectionStringBuilder connectionBuilder = new SqlConnectionStringBuilder(conStr.ConnectionString);
 
-                if (conStr.Name.ToLower() == connectionBuilder.DataSource.ToLower() && !listaSerwerow.Contains(connectionBuilder.DataSource))
-                    listaSerwerow.Add(conStr.Name);
+                if (conStr.Name.ToLower() == connectionBuilder.DataSource.ToLower() && !allServer.Contains(connectionBuilder.DataSource))
+                    allServer.Add(conStr.Name);
             }
 
-            ListaSQLCmbBox.ItemsSource = listaSerwerow;
+            ListaSQLCmbBox.ItemsSource = allServer;
 
             string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
 
@@ -71,34 +75,34 @@ namespace RunEnova
 
             if (conn.DataSource == ".")
             {
-                //conn.DataSource = Environment.MachineName;
-                //AppConfig.AddConnectionString("DefaultConnection", conn.DataSource, conn.InitialCatalog, null, null);
-                //ConfigurationManager.RefreshSection("connectionStrings");
-
-                return;
+                conn.DataSource = Environment.MachineName;
+                AppConfig.AddConnectionString("DefaultConnection", conn.DataSource, conn.InitialCatalog, null, null);
+                ConfigurationManager.RefreshSection("connectionStrings");
             }
 
             DomyslnySerwer = conn.DataSource;
 
-            if (listaSerwerow.Contains(DomyslnySerwer))
+            if (allServer.Contains(DomyslnySerwer))
+            {
                 ListaSQLCmbBox.SelectedItem = DomyslnySerwer;
 
-            if (!string.IsNullOrEmpty(conn.UserID))
-            {
-                UzytkownikTxtBox.Text = conn.UserID;
-                HasloTxtBox.Password = conn.Password;
-                WinAutenticationChkBox.IsChecked = false;
-            }
-
-            if (CheckIfDatabaseExist("BazyEnova", conn.ConnectionString))
-            {
                 BazaChkBox.IsChecked = true;
-                BazaChkBox.IsEnabled = false;
-            }
-            else
-            {
-                BazaChkBox.IsChecked = false;
-                BazaChkBox.IsEnabled = true;
+
+                if (!string.IsNullOrEmpty(conn.UserID))
+                {
+                    UzytkownikTxtBox.Text = conn.UserID;
+                    HasloTxtBox.Password = conn.Password;
+                    WinAutenticationChkBox.IsChecked = false;
+                }
+
+                if (CheckIfDatabaseExist("BazyEnova", conn.ConnectionString))
+                {
+                    BazaChkBox.IsEnabled = false;
+                }
+                else
+                {
+                    BazaChkBox.IsEnabled = true;
+                }
             }
         }
 
@@ -116,14 +120,17 @@ namespace RunEnova
             config.AppSettings.Settings["SonetaExplorerPath"].Value = CatalogExplorer;
             config.AppSettings.Settings["ListaBazDanychPath"].Value = CatalogListaBazDanych;
 
-            ConnectionStringSettings connection = ConfigurationManager.ConnectionStrings[DomyslnySerwer];
-
-            if (connection != null)
-                AppConfig.ChangeConnectionString("DefaultConnection", connection);
-
             config.Save(ConfigurationSaveMode.Modified);
+
+            ConnectionStringSettings connection = ConfigurationManager.ConnectionStrings[DomyslnySerwer];
+            ConnectionStringSettings defaultConnection = ConfigurationManager.ConnectionStrings["DefaultConnection"];
+
+            if (connection?.ConnectionString != defaultConnection?.ConnectionString)
+            {
+                AppConfig.ChangeConnectionString("DefaultConnection", connection);
+                ConfigurationManager.RefreshSection("connectionStrings");
+            }
             ConfigurationManager.RefreshSection("appSettings");
-            ConfigurationManager.RefreshSection("connectionStrings");
 
             this.Close();
         }
@@ -180,7 +187,12 @@ namespace RunEnova
         private void SelectSerwerCatalogBtn_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(CatalogSerwer))
-                CatalogSerwer = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            {
+                if (Directory.Exists($"C:\\Multi"))
+                    CatalogSerwer = $"C:\\Multi";
+                else
+                    CatalogSerwer = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            }
 
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
@@ -258,15 +270,11 @@ namespace RunEnova
                 }
 
                 AppConfig.AddConnectionString(serwer, serwer, "BazyEnova", user, pass);
-                //Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
                 if ((bool)BazaChkBox.IsChecked)
                 {
                     DomyslnySerwer = serwer;
                 }
-
-                //config.Save(ConfigurationSaveMode.Modified);
-                //ConfigurationManager.RefreshSection("appSettings");
                 ConfigurationManager.RefreshSection("connectionStrings");
             }
             MessageBox.Show("Zapisano ustawienia serwera");
@@ -293,10 +301,25 @@ namespace RunEnova
 
                 if (cs != null)
                 {
+                    if (LocalServer.Contains(cs.Name))
+                    {
+                        System.Windows.Forms.MessageBox.Show("Nie można usunąć serwera lokalnego " + cs.Name);
+                        return;
+                    }
+
                     csCollection.Remove(cs);
                     config.Save(ConfigurationSaveMode.Modified);
 
                     ConfigurationManager.RefreshSection("connectionStrings");
+
+                    ListaSQLCmbBox.SelectedItem = ListaSQLCmbBox.Items.Cast<string>().FirstOrDefault();
+
+
+                    System.Windows.Forms.MessageBox.Show($"Serwer '{cs.Name}' został usunięty z listy");
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Nie odnaleziony ConnectionString dla " + serwer);
                 }
             }
             catch (ConfigurationErrorsException err)

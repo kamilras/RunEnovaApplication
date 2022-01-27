@@ -19,14 +19,10 @@ namespace RunEnova
         {
             ConnectionString = connectionString;
             InitializeComponent();
+            WczytajListeOperatorow();
         }
 
-        public string ConnectionString { get; set; }
-        public Operator Operator { get; set; }
-
-        public List<Operator> ListaOperatorow { get; set; }
-
-        private void OperatorComBox_DropDownOpened(object sender, EventArgs e)
+        private void WczytajListeOperatorow()
         {
             Cursor = Cursors.Wait;
 
@@ -63,6 +59,10 @@ namespace RunEnova
                 Cursor = Cursors.Arrow;
             }
         }
+
+        public string ConnectionString { get; set; }
+        public Operator Operator { get; set; }
+        public List<Operator> ListaOperatorow { get; set; }
 
         private void OperatorComBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
