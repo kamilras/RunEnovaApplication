@@ -9,7 +9,7 @@
       Title="Ustawienia">
 
     <Grid>
-        <Rectangle Fill="#FFD4E6DB" HorizontalAlignment="Left" Height="98" Margin="16,166,0,0" Stroke="Black" VerticalAlignment="Top" Width="559" RenderTransformOrigin="0.5,0.5">
+        <Rectangle Fill="#FFE8E8E8" HorizontalAlignment="Left" Height="98" Margin="16,166,0,0" Stroke="Black" VerticalAlignment="Top" Width="559" RenderTransformOrigin="0.5,0.5">
             <Rectangle.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -20,7 +20,7 @@
             </Rectangle.RenderTransform>
         </Rectangle>
 
-        <Rectangle Fill="#FFD8F5E2" HorizontalAlignment="Left" Height="138" Margin="16,28,0,0" Stroke="Black" VerticalAlignment="Top" Width="559" RenderTransformOrigin="0.5,0.5">
+        <Rectangle Fill="#FFFBFDFC" HorizontalAlignment="Left" Height="138" Margin="16,28,0,0" Stroke="Black" VerticalAlignment="Top" Width="559" RenderTransformOrigin="0.5,0.5">
             <Rectangle.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>

@@ -1,0 +1,20 @@
+﻿<Window x:Class="RunEnovaApplication.DodajSerwer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RunEnovaApplication"
+        mc:Ignorable="d"
+        Title="DodajSerwer" Height="208.695" Width="406.087">
+    <Grid Margin="0,0,2,-2">
+        <Label Content="Nazwa Serwera" HorizontalAlignment="Left" Margin="24,28,0,0" VerticalAlignment="Top" Width="104" Height="26"/>
+        <TextBox x:Name="UzytkownikTxtBox" HorizontalAlignment="Left" Margin="146,59,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="235" Height="26"/>
+        <Label Content="Użytkownik" HorizontalAlignment="Left" Margin="24,59,0,0" VerticalAlignment="Top" Width="104" Height="26"/>
+        <Label Content="Hasło" HorizontalAlignment="Left" Margin="24,90,0,0" VerticalAlignment="Top" Width="104" Height="26"/>
+        <CheckBox x:Name="WinAutenticationChkBox" Content="Windows Autentication" HorizontalAlignment="Left" Margin="44,136,0,0" VerticalAlignment="Top" Height="16" Width="150" Checked="WinAutenticationChkBox_Checked" Unchecked="WinAutenticationChkBox_Unchecked"/>
+        <PasswordBox x:Name="HasloTxtBox" HorizontalAlignment="Left" Margin="146,90,0,0" VerticalAlignment="Top" Width="235" Height="26" />
+        <Button x:Name="DodajSerwerBtn" Content="Dodaj" HorizontalAlignment="Left" Margin="297,125,0,0" VerticalAlignment="Top" Width="85" Height="35" Click="DodajSerwerBtn_Click"/>
+        <TextBox x:Name="SerwerTxtBox" HorizontalAlignment="Left" Margin="146,28,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="235" Height="26"/>
+
+    </Grid>
+</Window>

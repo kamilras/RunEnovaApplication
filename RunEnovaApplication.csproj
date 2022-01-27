@@ -324,8 +324,11 @@
     <Compile Include="CopyDatabase.xaml.cs">
       <DependentUpon>CopyDatabase.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DodajSerwer.xaml.cs">
+      <DependentUpon>DodajSerwer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Extension\AppConfig.cs" />
     <Compile Include="Extension\CoreTools.cs" />
-    <Compile Include="Extension\DbSetting.cs" />
     <Compile Include="Extension\OperatorExt.cs" />
     <Compile Include="Extension\SqlHelper.cs" />
     <Compile Include="Migrations\202112101027097_Initial.cs" />
@@ -351,6 +354,10 @@
     <Page Include="CopyDatabase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DodajSerwer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="FeatureCodeWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

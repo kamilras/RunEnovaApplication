@@ -3,7 +3,8 @@
     public class Baza
     {
         public int Id { get; set; }
-        public string NazwaBazy { get; set; }
+        public string NazwaBazySQL { get; set; }
+        public string NazwaBazyEnova { get; set; }
         public string Operator { get; set; }
         public string FolderApp { get; set; }
         public string FolderUIApp { get; set; }

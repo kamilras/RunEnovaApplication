@@ -49,7 +49,7 @@
   <Class Name="RunEnova.MainWindow" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>iAEQACIgAwABgIEgIAEiAEEAAJIAAAAAAABEBAAABCQ=</HashCode>
+      <HashCode>iAEAACIgAwABgAMgIAEiAEEAAJIAABAAAABEBAAABCQ=</HashCode>
       <FileName>MainWindow.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -57,7 +57,7 @@
   <Class Name="RunEnova.ServerSQLConfig" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="4" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAASAAAAAAQAAAAwAAAAQCAACAAAAMAAAAAAABAAAAA=</HashCode>
+      <HashCode>AAAQAAAIAAQAAAAwAAAAQCAECAAAAMAAAAAgABAAAAA=</HashCode>
       <FileName>ServerSQLConfig.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -121,11 +121,11 @@
       <FileName>Extension\SqlHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="RunEnova.Extension.DbSetting" Collapsed="true">
+  <Class Name="RunEnova.Extension.AppConfig" Collapsed="true">
     <Position X="4" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
-      <FileName>Extension\DbSetting.cs</FileName>
+      <FileName>Extension\AppConfig.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RunEnovaApplication.Migrations.Initial" Collapsed="true" BaseTypeListCollapsed="true">

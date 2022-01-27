@@ -37,14 +37,16 @@ namespace RunEnova
             InitializeComponent();
         }
 
-        private void LoadContext(string database_name)
+        private void LoadContext()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings[database_name]?.ConnectionString;
-            if (connectionString == null)
+            string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
+
+            if(connectionString == null)
             {
-                MessageBox.Show("Nie znaleziono wpisu w App.config dla bazy - " + database_name);
+                MessageBox.Show("Nie znaleziono wpisu DefaultConnection w App.config dla domyślnego połączenia z bazą");
                 return;
             }
+
             Context = new BazaDb();
         }
 
@@ -174,12 +176,11 @@ namespace RunEnova
             AktualnaBazaSQL = ListaBaz[nazwa_bazy][0];
             AktualnaBazaEnova = ListaBaz[nazwa_bazy][1];
 
-            LoadContext("BazyEnova");
-            Baza c = Context?.Baza?.FirstOrDefault(x => x.NazwaBazy == AktualnaBazaSQL);
-            if (c != null)
-                Baza = c;
-            else
-                Baza = new Baza() { NazwaBazy = AktualnaBazaSQL };
+            if (Context == null)
+                LoadContext();
+            Baza = Context?.Baza?.FirstOrDefault(x => x.NazwaBazySQL == AktualnaBazaSQL && x.NazwaBazyEnova == AktualnaBazaEnova);
+            if (Baza == null)
+                Baza = new Baza() { NazwaBazySQL = AktualnaBazaSQL, NazwaBazyEnova = AktualnaBazaEnova };
 
             OdswiezUstawienia();
         }
@@ -279,7 +280,9 @@ namespace RunEnova
 
             foreach (ConnectionStringSettings conn in connectionStrings)
             {
-                if (conn.Name == "BazyEnova")
+                var conStr = new SqlConnectionStringBuilder(conn.ConnectionString);
+
+                if (conn.Name == conStr.DataSource || conn.Name == "LocalSqlServer")
                     continue;
 
                 bool dodaj = true;
@@ -349,7 +352,7 @@ namespace RunEnova
         private void SerwerSQLBtn_Click(object sender, RoutedEventArgs e)
         {
             ServerSQLConfig serverSQLConfig = new ServerSQLConfig();
-            serverSQLConfig.Show();
+            serverSQLConfig.ShowDialog();
         }
 
         private void ConfigBtn_Click(object sender, RoutedEventArgs e)
@@ -385,53 +388,72 @@ namespace RunEnova
         {
             Cursor = Cursors.Wait;
 
-            string conString;
-            string[] listaInstancjiSQL = SqlHelper.ListLocalSqlInstances().ToArray();
+            ConnectionStringSettingsCollection connectionStrings = ConfigurationManager.ConnectionStrings;
 
-            foreach (string sqlName in listaInstancjiSQL)
+            foreach (ConnectionStringSettings conn in connectionStrings)
             {
-                conString = $"Server={sqlName};Trusted_Connection=True;";
+                var conStr = new SqlConnectionStringBuilder(conn.ConnectionString);
 
-                List<string> list = new List<string>();
-                List<string> listaBazTemp = new List<string>();
-
-                using (SqlConnection con = new SqlConnection(conString))
+                if (conn.Name == conStr.DataSource)
                 {
-                    con.Open();
+                    List<string> list = new List<string>();
+                    List<string> listaBazTemp = new List<string>();
 
-                    using (SqlCommand cmd = new SqlCommand("SELECT name from sys.databases", con))
-                    {
-                        using (IDataReader dr = cmd.ExecuteReader())
-                        {
-                            while (dr.Read())
-                            {
-                                list.Add(dr[0].ToString());
-                            }
-                        }
-                    }
+                    string conString = $"Server={conStr.DataSource};Trusted_Connection=True;Integrated Security=True;";
 
-                    foreach (string baza in list)
+                    if (!conStr.IntegratedSecurity)
+                        conString = $"Server={conStr.DataSource};Trusted_Connection=True;Integrated Security=False;User ID={conStr.UserID};Password={conStr.Password};";
+
+                    try
                     {
-                        con.ChangeDatabase(baza);
-                        using (SqlCommand cmd = new SqlCommand("SELECT TABLE_CATALOG FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SystemInfos'", con))
+                        using (SqlConnection con = new SqlConnection(conString))
                         {
-                            using (IDataReader dr = cmd.ExecuteReader())
+                            con.Open();
+
+                            using (SqlCommand cmd = new SqlCommand("SELECT name from sys.databases", con))
                             {
-                                while (dr.Read())
+                                using (IDataReader dr = cmd.ExecuteReader())
                                 {
-                                    listaBazTemp.Add(dr[0].ToString());
+                                    while (dr.Read())
+                                    {
+                                        list.Add(dr[0].ToString());
+                                    }
+                                }
+                            }
+
+                            foreach (string baza in list)
+                            {
+                                con.ChangeDatabase(baza);
+                                using (SqlCommand cmd = new SqlCommand("SELECT TABLE_CATALOG FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SystemInfos'", con))
+                                {
+                                    using (IDataReader dr = cmd.ExecuteReader())
+                                    {
+                                        while (dr.Read())
+                                        {
+                                            listaBazTemp.Add(dr[0].ToString());
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        throw ex;
+                    }
 
                     foreach (string baza in listaBazTemp)
                     {
-                        DbSetting.CreateConnectionString(sqlName, baza, null, null);
-                        ConfigurationManager.RefreshSection("connectionStrings");
+                        if (!conStr.IntegratedSecurity)
+                            AppConfig.AddConnectionString(baza, conStr.DataSource, baza, conStr.UserID, conStr.Password.ToString());
+                        else
+                            AppConfig.AddConnectionString(baza, conStr.DataSource, baza, null, null);
                     }
                 }
             }
+
+            ConfigurationManager.RefreshSection("connectionStrings");
 
             Cursor = Cursors.Arrow;
         }

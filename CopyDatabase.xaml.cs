@@ -28,7 +28,7 @@ namespace RunEnovaApplication
             List<string> listaNazw = new List<string>();
             var lista = Context.Baza.ToList();
 
-            ListaBaz.ItemsSource = lista.Select(x => x.NazwaBazy);
+            ListaBaz.ItemsSource = lista.Select(x => x.NazwaBazySQL);
         }
 
         private void ListaBaz_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -37,7 +37,7 @@ namespace RunEnovaApplication
 
             string baza = (string)comboBox.SelectedItem;
 
-            Baza = Context.Baza.Where(x => x.NazwaBazy == baza).FirstOrDefault();
+            Baza = Context.Baza.Where(x => x.NazwaBazySQL == baza).FirstOrDefault();
             WprowadzDane();
         }
 
