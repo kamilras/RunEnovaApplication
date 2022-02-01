@@ -96,13 +96,7 @@ namespace RunEnova
                 }
 
                 if (CheckIfDatabaseExist("BazyEnova", conn.ConnectionString))
-                {
                     BazaChkBox.IsEnabled = false;
-                }
-                else
-                {
-                    BazaChkBox.IsEnabled = true;
-                }
             }
         }
 

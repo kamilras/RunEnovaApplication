@@ -146,8 +146,10 @@ namespace RunEnova
         private void KopiujBtn_Click(object sender, KopiujBtnValueEventArgs e)
         {
             string baza = Baza.NazwaBazySQL;
+            string bazaEnova = Baza.NazwaBazyEnova;
             Baza = e.WybranaBaza;
             Baza.NazwaBazySQL = baza;
+            Baza.NazwaBazyEnova = bazaEnova;
             WprowadzUstawienia();
         }
 

@@ -52,16 +52,8 @@ namespace RunEnova
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (Context == null || Context.Baza == null)
-            {
-                MessageBox.Show("Nie wybrano żadnej bazy danych");
+            if (SprawdzBaze())
                 return;
-            }
-            else if (string.IsNullOrEmpty(AktualnaBazaEnova))
-            {
-                MessageBox.Show($"Nie znaleziono wpisu w listach baz danych dla bazy SQL {AktualnaBazaSQL}");
-                return;
-            }
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
 
@@ -93,6 +85,21 @@ namespace RunEnova
             {
                 MessageBox.Show("Błąd: " + ex.Message);
             }
+        }
+
+        private bool SprawdzBaze()
+        {
+            if (Context == null || Context.Baza == null)
+            {
+                MessageBox.Show("Nie wybrano żadnej bazy danych");
+                return true;
+            }
+            else if (string.IsNullOrEmpty(AktualnaBazaEnova))
+            {
+                MessageBox.Show($"Nie znaleziono wpisu w listach baz danych dla bazy SQL {AktualnaBazaSQL}");
+                return true;
+            }
+            return false;
         }
 
         private void WersjaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -160,18 +167,10 @@ namespace RunEnova
 
         private void ZapiszBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (Context == null || Context.Baza == null)
-            {
-                MessageBox.Show("Nie wybrano żadnej bazy danych");
+            if (SprawdzBaze())
                 return;
-            }
-            else if (string.IsNullOrEmpty(AktualnaBazaEnova))
-            {
-                MessageBox.Show($"Nie znaleziono wpisu w listach baz danych dla bazy SQL {AktualnaBazaSQL}");
-                return;
-            }
 
-            if (Context.Baza.FirstOrDefault(x => x.Id == Baza.Id) == null)
+            if (Context.Baza.FirstOrDefault(x => x.NazwaBazySQL == Baza.NazwaBazySQL && x.NazwaBazyEnova == Baza.NazwaBazyEnova) == null)
                 Context.Baza.Add(Baza);
 
             Context.SaveChanges();
@@ -367,16 +366,8 @@ namespace RunEnova
 
         private void ConfigBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (Context == null || Context.Baza == null)
-            {
-                MessageBox.Show("Nie wybrano żadnej bazy danych");
+            if (SprawdzBaze())
                 return;
-            }
-            else if (string.IsNullOrEmpty(AktualnaBazaEnova))
-            {
-                MessageBox.Show($"Nie znaleziono wpisu w listach baz danych dla bazy SQL {AktualnaBazaSQL}");
-                return;
-            }
 
             Config config = new Config(Baza);
             config.TextBoxValueChanged += ConfigWindowOnTextBoxValueChanged;
