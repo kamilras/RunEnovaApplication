@@ -44,6 +44,8 @@ namespace RunEnova
             SonetaSerwerTxtBox.Text = CatalogSerwer;
             ListaBazDancyhTxtBox.Text = CatalogListaBazDanych;
 
+            bool sprawdzBaze = true;
+
             LocalServer = SqlHelper.ListLocalSqlInstances().ToList();
 
             List<string> allServer = new List<string>();
@@ -78,6 +80,7 @@ namespace RunEnova
                 conn.DataSource = Environment.MachineName;
                 AppConfig.AddConnectionString("DefaultConnection", conn.DataSource, conn.InitialCatalog, null, null);
                 ConfigurationManager.RefreshSection("connectionStrings");
+                sprawdzBaze = false;
             }
 
             DomyslnySerwer = conn.DataSource;
@@ -95,7 +98,7 @@ namespace RunEnova
                     WinAutenticationChkBox.IsChecked = false;
                 }
 
-                if (CheckIfDatabaseExist("BazyEnova", conn.ConnectionString))
+                if (sprawdzBaze && CheckIfDatabaseExist("BazyEnova", conn.ConnectionString))
                     BazaChkBox.IsEnabled = false;
             }
         }
@@ -107,6 +110,8 @@ namespace RunEnova
                 if (string.IsNullOrEmpty(ConfigurationManager.ConnectionStrings[serwer]?.ConnectionString))
                     AppConfig.AddConnectionString(serwer, serwer, "BazyEnova", null, null);
             }
+
+            ConfigurationManager.RefreshSection("connectionStrings");
 
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 

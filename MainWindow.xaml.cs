@@ -360,7 +360,9 @@ namespace RunEnova
 
         private void SerwerSQLBtn_Click(object sender, RoutedEventArgs e)
         {
+            Cursor = Cursors.Wait;
             ServerSQLConfig serverSQLConfig = new ServerSQLConfig();
+            Cursor = Cursors.Arrow;
             serverSQLConfig.ShowDialog();
         }
 
