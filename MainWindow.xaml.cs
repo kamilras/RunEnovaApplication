@@ -107,13 +107,17 @@ namespace RunEnova
             if (Baza == null)
                 return;
 
-            if (((ComboBox)sender).SelectedItem == null)
+            string wybranaWersja = ((ComboBox)sender).SelectedItem?.ToString();
+
+            if (string.IsNullOrEmpty(wybranaWersja))
                 return;
 
             if ((bool)SonetaServerRadioBtn?.IsChecked)
-                Baza.FolderServ = ((ComboBox)sender).SelectedItem?.ToString();
-            else
-                Baza.FolderApp = ((ComboBox)sender).SelectedItem?.ToString();
+                if (wybranaWersja != Baza.FolderServ)
+                    Baza.FolderServ = wybranaWersja;
+                else
+                if (wybranaWersja != Baza.FolderApp)
+                    Baza.FolderApp = wybranaWersja;
         }
         private void SonetaExplorerRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
@@ -199,7 +203,7 @@ namespace RunEnova
             if (Baza == null)
                 return;
 
-            Config.ShowOnPanel(Baza, out SonetaExplorerParam, out SonetaServerParam);
+            UzupelnijListeFolderowZWersja();
 
             if ((bool)SonetaExplorerRadioBtn?.IsChecked)
             {
@@ -618,6 +622,23 @@ namespace RunEnova
 
         private void WersjaComboBox_DropDownOpened(object sender, EventArgs e)
         {
+            UzupelnijListeFolderowZWersja();
+        }
+
+        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            PopupInfo.IsOpen = true;
+            PopupInfo.Visibility = Visibility.Visible;
+        }
+
+        private void Image_MouseMove(object sender, MouseEventArgs e)
+        {
+            PopupInfo.IsOpen = false;
+            PopupInfo.Visibility = Visibility.Hidden;
+        }
+
+        public void UzupelnijListeFolderowZWersja()
+        {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             SonetaSerwerCatalog = config.AppSettings.Settings["SonetaSerwerPath"].Value;
             SonetaExplorerCatalog = config.AppSettings.Settings["SonetaExplorerPath"].Value;
@@ -638,18 +659,6 @@ namespace RunEnova
                 DirectoryInfo dir = new DirectoryInfo($"{SonetaSerwerCatalog}");
                 WersjaComboBox.ItemsSource = dir.GetDirectories().Select(x => x.Name).ToList();
             }
-        }
-
-        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            PopupInfo.IsOpen = true;
-            PopupInfo.Visibility = Visibility.Visible;
-        }
-
-        private void Image_MouseMove(object sender, MouseEventArgs e)
-        {
-            PopupInfo.IsOpen = false;
-            PopupInfo.Visibility = Visibility.Hidden;
         }
     }
 }
