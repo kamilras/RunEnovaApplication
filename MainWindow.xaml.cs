@@ -113,11 +113,13 @@ namespace RunEnova
                 return;
 
             if ((bool)SonetaServerRadioBtn?.IsChecked)
+            {
                 if (wybranaWersja != Baza.FolderServ)
                     Baza.FolderServ = wybranaWersja;
-                else
+            }
+            else
                 if (wybranaWersja != Baza.FolderApp)
-                    Baza.FolderApp = wybranaWersja;
+                Baza.FolderApp = wybranaWersja;
         }
         private void SonetaExplorerRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
@@ -191,6 +193,7 @@ namespace RunEnova
 
             if (Context == null)
                 LoadContext();
+
             Baza = Context?.Baza?.FirstOrDefault(x => x.NazwaBazySQL == AktualnaBazaSQL && x.NazwaBazyEnova == AktualnaBazaEnova);
             if (Baza == null)
                 Baza = new Baza() { NazwaBazySQL = AktualnaBazaSQL, NazwaBazyEnova = AktualnaBazaEnova };
@@ -204,6 +207,7 @@ namespace RunEnova
                 return;
 
             UzupelnijListeFolderowZWersja();
+            Config.ShowOnPanel(Baza, out SonetaExplorerParam, out SonetaServerParam);
 
             if ((bool)SonetaExplorerRadioBtn?.IsChecked)
             {
